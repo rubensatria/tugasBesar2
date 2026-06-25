@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Berita – BusNusantara</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+
+
+<!-- NAVBAR -->
+<nav>
+  <div class="nav-brand">🚌 <span>Bus</span>Nusantara</div>
+  <ul class="nav-links">
+    <li><a href="halaman.html">Beranda</a></li>
+    <li><a href="pesananTiket.html">Pesan Tiket</a></li>
+    <li><a href="berita.html" class="active">Berita</a></li>
+    <li><a href="bantuan.html">Bantuan</a></li>
+  </ul>
+  <a href="pesananTiket.html" class="btn btn-primary">Beli Tiket</a>
+</nav>
+
+<!-- HERO KECIL -->
+<div style="background:linear-gradient(135deg,var(--primary),#0f2540); padding:2rem; color:var(--white); text-align:center;">
+  <h1 style="font-size:1.8rem; font-weight:800;">Berita & <span style="color:var(--accent);">Pengumuman</span></h1>
+  <p style="color:rgba(255,255,255,.7); margin-top:.3rem;">Informasi terkini seputar layanan dan promo BusNusantara</p>
+</div>
+
+<!-- KONTEN BERITA -->
+<section class="section">
+  <div class="container">
+
+    <!-- KARTU BERITA UTAMA -->
+    <h2 class="section-title">Berita <span>Terbaru</span></h2>
+    <p class="section-sub">Update terkini dari BusNusantara</p>
+    <div class="berita-grid" id="beritaGrid"></div>
+
+    <!-- DIVIDER -->
+    <div style="border-top:2px solid var(--border); margin:2.5rem 0;"></div>
+
+    <!-- TABEL RIWAYAT PENGUMUMAN -->
+    <h2 class="section-title" style="margin-bottom:.4rem;">📋 Riwayat <span>Pengumuman</span></h2>
+    <p class="section-sub">Arsip semua pengumuman resmi BusNusantara</p>
+
+    <!-- Filter Tabel -->
+    <div class="table-filters">
+      <input type="text" id="searchPengumuman" placeholder="🔍 Cari pengumuman..." oninput="filterTabel()" style="min-width:220px;"/>
+      <select id="filterKategori" onchange="filterTabel()">
+        <option value="">Semua Kategori</option>
+        <option value="Promo">Promo</option>
+        <option value="Operasional">Operasional</option>
+        <option value="Armada">Armada</option>
+        <option value="Kebijakan">Kebijakan</option>
+      </select>
+      <select id="filterStatus" onchange="filterTabel()">
+        <option value="">Semua Status</option>
+        <option value="Aktif">Aktif</option>
+        <option value="Berakhir">Berakhir</option>
+        <option value="Akan Datang">Akan Datang</option>
+      </select>
+      <button class="btn btn-outline btn-sm" onclick="resetFilter()">Reset</button>
+      <span id="jumlahHasil" style="margin-left:auto; font-size:.85rem; color:var(--muted);"></span>
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th onclick="sortTabel('judul')" style="cursor:pointer;">Judul ↕</th>
+            <th onclick="sortTabel('kategori')" style="cursor:pointer;">Kategori ↕</th>
+            <th onclick="sortTabel('tanggal')" style="cursor:pointer;">Tanggal ↕</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tabelBody"></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="6" id="tabelFoot">Memuat data...</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- PAGINATION -->
+    <div style="display:flex; justify-content:center; gap:.5rem; margin-top:1.2rem;" id="pagination"></div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">🚌 <span>Bus</span>Nusantara</div>
+      <p>Platform pemesanan tiket bus terpercaya yang menghubungkan kota-kota di seluruh Indonesia.</p>
+    </div>
+    <div class="footer-col"><h4>Layanan</h4><ul><li><a href="pesananTiket.html">Pesan Tiket</a></li><li><a href="#">Cek Status</a></li><li><a href="#">Reschedule</a></li></ul></div>
+    <div class="footer-col"><h4>Perusahaan</h4><ul><li><a href="#">Tentang Kami</a></li><li><a href="berita.html">Berita</a></li><li><a href="#">Karier</a></li></ul></div>
+    <div class="footer-col"><h4>Bantuan</h4><ul><li><a href="bantuan.html">FAQ</a></li><li><a href="bantuan.html">Hubungi Kami</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">© 2025 BusNusantara. All rights reserved.</div>
+</footer>
+
+<div class="toast" id="toastMsg"></div>
+
+<!-- MODAL -->
+<div id="modalOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:200; align-items:center; justify-content:center;">
+  <div style="background:var(--white); border-radius:var(--radius); padding:2rem; max-width:520px; width:90%; position:relative;">
+    <button onclick="tutupModal()" style="position:absolute; top:.8rem; right:1rem; background:none; border:none; font-size:1.4rem; cursor:pointer; color:var(--muted);">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+</body>
+</html>

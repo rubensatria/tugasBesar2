@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pesan Tiket – BusNusantara</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+
+
+<!-- NAVBAR -->
+<nav>
+  <div class="nav-brand">🚌 <span>Bus</span>Nusantara</div>
+  <ul class="nav-links">
+    <li><a href="halaman.html">Beranda</a></li>
+    <li><a href="pesananTiket.html" class="active">Pesan Tiket</a></li>
+    <li><a href="berita.html">Berita</a></li>
+    <li><a href="bantuan.html">Bantuan</a></li>
+  </ul>
+  <a href="pesananTiket.html" class="btn btn-primary">Beli Tiket</a>
+</nav>
+
+<!-- HERO KECIL -->
+<div style="background:linear-gradient(135deg,var(--primary),#0f2540); padding:2rem; color:var(--white); text-align:center;">
+  <h1 style="font-size:1.8rem; font-weight:800;">Pesan <span style="color:var(--accent);">Tiket Bus</span></h1>
+  <p style="color:rgba(255,255,255,.7); margin-top:.3rem;">Isi formulir berikut untuk memesan tiket perjalanan Anda</p>
+</div>
+
+<!-- CONTENT -->
+<section class="section">
+  <div class="container">
+
+    <!-- STEP INDICATOR -->
+    <div class="steps" id="stepBar">
+      <div class="step active" id="step1Ind"><div class="step-num">1</div> Pilih Rute</div>
+      <div class="step-line"></div>
+      <div class="step" id="step2Ind"><div class="step-num">2</div> Pilih Kursi</div>
+      <div class="step-line"></div>
+      <div class="step" id="step3Ind"><div class="step-num">3</div> Data Penumpang</div>
+      <div class="step-line"></div>
+      <div class="step" id="step4Ind"><div class="step-num">4</div> Konfirmasi</div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:2rem;">
+
+      <!-- PANEL KIRI: FORM MULTI-STEP -->
+      <div>
+        <!-- STEP 1: PILIH RUTE -->
+        <div id="panel1" class="form-wrapper">
+          <div class="form-title">🗺️ Step 1 – Pilih Rute & Jadwal</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Kota Asal <span class="req">*</span></label>
+              <select class="form-control" id="kotaAsal" onchange="hitungHarga()">
+                <option value="">Pilih Kota Asal</option>
+                <option>Banda Aceh</option>
+                <option>Medan</option>
+                <option>Padang</option>
+                <option>Pekanbaru</option>
+                <option>Jakarta</option>
+                <option>Bandung</option>
+                <option>Semarang</option>
+                <option>Yogyakarta</option>
+                <option>Surabaya</option>
+                <option>Makassar</option>
+              </select>
+              <div class="error-msg" id="err-asal">Kota asal harus dipilih.</div>
+            </div>
+            <div class="form-group">
+              <label>Kota Tujuan <span class="req">*</span></label>
+              <select class="form-control" id="kotaTujuan" onchange="hitungHarga()">
+                <option value="">Pilih Kota Tujuan</option>
+                <option>Banda Aceh</option>
+                <option>Medan</option>
+                <option>Padang</option>
+                <option>Pekanbaru</option>
+                <option>Jakarta</option>
+                <option>Bandung</option>
+                <option>Semarang</option>
+                <option>Yogyakarta</option>
+                <option>Surabaya</option>
+                <option>Makassar</option>
+              </select>
+              <div class="error-msg" id="err-tujuan">Kota tujuan harus dipilih.</div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Tanggal Berangkat <span class="req">*</span></label>
+              <input type="date" class="form-control" id="tanggalBrgkt"/>
+              <div class="error-msg" id="err-tgl">Tanggal berangkat harus diisi.</div>
+            </div>
+            <div class="form-group">
+              <label>Kelas Layanan <span class="req">*</span></label>
+              <select class="form-control" id="kelasLayanan" onchange="hitungHarga()">
+                <option value="">Pilih Kelas</option>
+                <option value="ekonomi">Ekonomi AC – Rp 80.000</option>
+                <option value="eksekutif">Eksekutif – Rp 150.000</option>
+                <option value="vip">VIP Sleeper – Rp 250.000</option>
+              </select>
+              <div class="error-msg" id="err-kelas">Kelas layanan harus dipilih.</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Jumlah Penumpang <span class="req">*</span></label>
+            <div class="counter-wrap">
+              <button type="button" class="counter-btn" onclick="ubahPenumpang(-1)">−</button>
+              <span class="counter-val" id="jmlPenumpang">1</span>
+              <button type="button" class="counter-btn" onclick="ubahPenumpang(1)">+</button>
+              <span style="font-size:.85rem; color:var(--muted); margin-left:.5rem;">Maks. 4 penumpang per transaksi</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Kode Promo (Opsional)</label>
+            <div style="display:flex; gap:.6rem;">
+              <input type="text" class="form-control" id="kodePromo" placeholder="Contoh: BUSHEMAT30" style="flex:1;"/>
+              <button type="button" class="btn btn-outline" onclick="terapkanPromo()">Terapkan</button>
+            </div>
+            <div class="form-hint" id="promoInfo"></div>
+          </div>
+
+          <button class="btn btn-primary" style="width:100%; justify-content:center; margin-top:.5rem;" onclick="lanjutStep2()">
+            Lanjut Pilih Kursi →
+          </button>
+        </div>
+
+        <!-- STEP 2: PILIH KURSI -->
+        <div id="panel2" class="form-wrapper" style="display:none;">
+          <div class="form-title">💺 Step 2 – Pilih Kursi</div>
+          <p style="font-size:.88rem; color:var(--muted); margin-bottom:1rem;">
+            Klik kursi yang tersedia untuk memilih. Pilih sesuai jumlah penumpang.
+          </p>
+          <div class="seat-grid" id="seatGrid"></div>
+          <div class="seat-legend">
+            <span><div class="leg-box available"></div> Tersedia</span>
+            <span><div class="leg-box selected"></div> Dipilih</span>
+            <span><div class="leg-box booked"></div> Terpesan</span>
+          </div>
+          <div id="seatInfo" style="margin-top:1rem; font-size:.88rem; color:var(--muted);">Belum ada kursi dipilih.</div>
+          <div style="display:flex; gap:.8rem; margin-top:1rem;">
+            <button class="btn btn-outline" onclick="kembaliStep(1)" style="flex:1; justify-content:center;">← Kembali</button>
+            <button class="btn btn-primary" onclick="lanjutStep3()" style="flex:1; justify-content:center;">Lanjut Isi Data →</button>
+          </div>
+        </div>
+
+        <!-- STEP 3: DATA PENUMPANG -->
+        <div id="panel3" class="form-wrapper" style="display:none;">
+          <div class="form-title">👤 Step 3 – Data Penumpang</div>
+          <div id="formPenumpangWrap"></div>
+
+          <div class="form-group" style="margin-top:1.2rem; border-top:1.5px solid var(--border); padding-top:1.2rem;">
+            <label style="font-size:1rem; font-weight:700;">📧 Kontak Pemesan</label>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Email <span class="req">*</span></label>
+              <input type="email" class="form-control" id="emailPemesan" placeholder="email@contoh.com"/>
+              <div class="error-msg" id="err-email">Email tidak valid.</div>
+            </div>
+            <div class="form-group">
+              <label>No. WhatsApp <span class="req">*</span></label>
+              <input type="tel" class="form-control" id="noWA" placeholder="08xxxxxxxxxx"/>
+              <div class="error-msg" id="err-wa">Nomor WhatsApp harus diisi.</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Metode Pembayaran <span class="req">*</span></label>
+            <select class="form-control" id="metodeBayar">
+              <option value="">Pilih Metode</option>
+              <option value="qris">QRIS</option>
+              <option value="bni">Transfer BNI</option>
+              <option value="bca">Transfer BCA</option>
+              <option value="mandiri">Transfer Mandiri</option>
+              <option value="gopay">GoPay</option>
+              <option value="ovo">OVO</option>
+            </select>
+            <div class="error-msg" id="err-bayar">Metode pembayaran harus dipilih.</div>
+          </div>
+
+          <div style="display:flex; gap:.8rem; margin-top:1rem;">
+            <button class="btn btn-outline" onclick="kembaliStep(2)" style="flex:1; justify-content:center;">← Kembali</button>
+            <button class="btn btn-primary" onclick="lanjutStep4()" style="flex:1; justify-content:center;">Konfirmasi Pesanan →</button>
+          </div>
+        </div>
+
+        <!-- STEP 4: KONFIRMASI -->
+        <div id="panel4" class="form-wrapper" style="display:none;">
+          <div class="form-title">✅ Step 4 – Konfirmasi Pesanan</div>
+          <div id="konfirmasiDetail"></div>
+          <div style="margin-top:1rem; display:flex; gap:.8rem;">
+            <button class="btn btn-outline" onclick="kembaliStep(3)" style="flex:1; justify-content:center;">← Kembali</button>
+            <button class="btn btn-success" onclick="bayarSekarang()" style="flex:1; justify-content:center;">💳 Bayar Sekarang</button>
+          </div>
+        </div>
+
+        <!-- STEP 5: BERHASIL -->
+        <div id="panel5" class="form-wrapper" style="display:none; text-align:center;">
+          <div style="font-size:3rem; margin-bottom:1rem;">🎉</div>
+          <h3 style="color:var(--success); font-size:1.3rem; margin-bottom:.5rem;">Pemesanan Berhasil!</h3>
+          <p style="color:var(--muted); margin-bottom:.4rem;">Tiket Anda telah dikirim ke email dan WhatsApp.</p>
+          <div id="kodeBooking" style="font-size:1.5rem; font-weight:800; color:var(--primary); background:var(--light); padding:.8rem; border-radius:8px; letter-spacing:2px; margin:1rem 0;"></div>
+          <p style="font-size:.85rem; color:var(--muted); margin-bottom:1.2rem;">Tunjukkan kode ini kepada petugas saat boarding.</p>
+          <a href="halaman.html" class="btn btn-primary" style="justify-content:center;">Kembali ke Beranda</a>
+        </div>
+      </div>
+
+
+      <!-- RINGKASAN PESANAN (full width di bawah form) -->
+      <div class="form-wrapper" style="max-width:100%;">
+        <div class="form-title" style="font-size:1rem;">🧾 Ringkasan Pesanan</div>
+        <div class="order-summary" style="background:transparent; border:none; padding:0;">
+          <div class="summary-row"><span>Rute</span><span id="sumRute" style="font-weight:600;">–</span></div>
+          <div class="summary-row"><span>Tanggal</span><span id="sumTanggal">–</span></div>
+          <div class="summary-row"><span>Kelas</span><span id="sumKelas">–</span></div>
+          <div class="summary-row"><span>Penumpang</span><span id="sumPenumpang">1 orang</span></div>
+          <div class="summary-row"><span>Kursi</span><span id="sumKursi">–</span></div>
+          <div class="summary-row"><span>Harga/kursi</span><span id="sumHargaSatuan">–</span></div>
+          <div class="summary-row"><span>Diskon</span><span id="sumDiskon" style="color:var(--success);">Rp 0</span></div>
+          <div class="summary-row total"><span>Total</span><span id="sumTotal">–</span></div>
+        </div>
+      </div>
+
+      <!-- TABEL DETAIL PESANAN DINAMIS (full width) -->
+      <div class="form-wrapper" style="max-width:100%; padding:1.5rem;">
+        <div class="form-title" style="font-size:.95rem; margin-bottom:.8rem;">📋 Detail Inputan Pesanan</div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Informasi</th>
+                <th>Nilai</th>
+              </tr>
+            </thead>
+            <tbody id="tabelDetailPesanan">
+              <tr><td colspan="2" style="text-align:center; color:var(--muted); font-size:.85rem; padding:1rem;">Isi form untuk melihat detail pesanan</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">🚌 <span>Bus</span>Nusantara</div>
+      <p>Platform pemesanan tiket bus terpercaya yang menghubungkan kota-kota di seluruh Indonesia.</p>
+    </div>
+    <div class="footer-col"><h4>Layanan</h4><ul><li><a href="pesananTiket.html">Pesan Tiket</a></li><li><a href="#">Cek Status</a></li><li><a href="#">Reschedule</a></li></ul></div>
+    <div class="footer-col"><h4>Perusahaan</h4><ul><li><a href="#">Tentang Kami</a></li><li><a href="berita.html">Berita</a></li><li><a href="#">Karier</a></li></ul></div>
+    <div class="footer-col"><h4>Bantuan</h4><ul><li><a href="bantuan.html">FAQ</a></li><li><a href="bantuan.html">Hubungi Kami</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">© 2025 BusNusantara. All rights reserved.</div>
+</footer>
+
+<div class="toast" id="toastMsg"></div>
+<script src="script.js"></script>
+</body>
+</html>

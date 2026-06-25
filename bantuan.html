@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bantuan – BusNusantara</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+
+
+<!-- NAVBAR -->
+<nav>
+  <div class="nav-brand">🚌 <span>Bus</span>Nusantara</div>
+  <ul class="nav-links">
+    <li><a href="halaman.html">Beranda</a></li>
+    <li><a href="pesananTiket.html">Pesan Tiket</a></li>
+    <li><a href="berita.html">Berita</a></li>
+    <li><a href="bantuan.html" class="active">Bantuan</a></li>
+  </ul>
+  <a href="pesananTiket.html" class="btn btn-primary">Beli Tiket</a>
+</nav>
+
+<!-- HERO KECIL -->
+<div style="background:linear-gradient(135deg,var(--primary),#0f2540); padding:2rem; color:var(--white); text-align:center;">
+  <h1 style="font-size:1.8rem; font-weight:800;">Pusat <span style="color:var(--accent);">Bantuan</span></h1>
+  <p style="color:rgba(255,255,255,.7); margin-top:.3rem;">Ada pertanyaan? Kami siap membantu Anda 24 jam sehari</p>
+</div>
+
+<section class="section">
+  <div class="container">
+
+    <!-- CEK STATUS PESANAN (JavaScript + Tabel) -->
+    <div style="background:var(--white); border-radius:var(--radius); padding:2rem; box-shadow:var(--shadow); margin-bottom:2.5rem;">
+      <h2 class="section-title" style="margin-bottom:.4rem;">🔍 Cek Status <span>Pesanan</span></h2>
+      <p style="color:var(--muted); font-size:.9rem; margin-bottom:1.2rem;">Masukkan kode booking Anda untuk melihat status terkini</p>
+      <div style="display:flex; gap:.8rem; flex-wrap:wrap;">
+        <input type="text" id="inputKodeBooking" class="form-control" placeholder="Contoh: BN-ABC123" style="max-width:280px;" oninput="this.value=this.value.toUpperCase()"/>
+        <button class="btn btn-primary" onclick="cekStatus()">Cek Sekarang</button>
+      </div>
+      <div id="hasilCek" style="margin-top:1.2rem;"></div>
+    </div>
+
+    <!-- TABEL RIWAYAT PERJALANAN (demo) -->
+    <h2 class="section-title" style="margin-bottom:.4rem;">📊 Riwayat <span>Perjalanan</span></h2>
+    <p style="color:var(--muted); font-size:.9rem; margin-bottom:1rem;">Contoh riwayat perjalanan pelanggan (demo)</p>
+
+    <div class="table-filters">
+      <input type="text" id="cariRiwayat" placeholder="🔍 Cari rute atau kode..." oninput="filterRiwayat()" style="min-width:220px;"/>
+      <select id="filterStatusRiwayat" onchange="filterRiwayat()">
+        <option value="">Semua Status</option>
+        <option value="Selesai">Selesai</option>
+        <option value="Dibatalkan">Dibatalkan</option>
+        <option value="Menunggu">Menunggu</option>
+      </select>
+      <span id="infoRiwayat" style="margin-left:auto; font-size:.85rem; color:var(--muted);"></span>
+    </div>
+
+    <div class="table-wrapper" style="margin-bottom:2.5rem;">
+      <table>
+        <thead>
+          <tr>
+            <th>Kode Booking</th>
+            <th>Rute</th>
+            <th>Tanggal</th>
+            <th>Kelas</th>
+            <th>Total</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="tabelRiwayat"></tbody>
+      </table>
+    </div>
+
+    <!-- FAQ + KONTAK -->
+    <div class="contact-grid">
+      <!-- FAQ -->
+      <div>
+        <h2 class="section-title" style="margin-bottom:.4rem;">❓ Pertanyaan <span>Umum (FAQ)</span></h2>
+        <p style="color:var(--muted); font-size:.9rem; margin-bottom:1.2rem;">Klik pertanyaan untuk melihat jawaban</p>
+
+        <!-- Search FAQ -->
+        <div style="margin-bottom:1rem;">
+          <input type="text" class="form-control" id="cariFAQ" placeholder="🔍 Cari pertanyaan..." oninput="filterFAQ()" style="max-width:400px;"/>
+        </div>
+
+        <div class="faq-list" id="faqList"></div>
+      </div>
+
+      <!-- FORM KONTAK -->
+      <div>
+        <h2 class="section-title" style="margin-bottom:.4rem;">📬 Hubungi <span>Kami</span></h2>
+        <p style="color:var(--muted); font-size:.9rem; margin-bottom:1.4rem;">Tim kami akan merespons dalam 1x24 jam</p>
+
+        <div class="contact-info" style="margin-bottom:1.5rem;">
+          <div class="contact-card">
+            <div class="icon">📞</div>
+            <div>
+              <h4>Telepon / WhatsApp</h4>
+              <p>0800-123-4567 (Gratis, 24 Jam)</p>
+            </div>
+          </div>
+          <div class="contact-card">
+            <div class="icon">📧</div>
+            <div>
+              <h4>Email</h4>
+              <p>info@busnusantara.id</p>
+            </div>
+          </div>
+          <div class="contact-card">
+            <div class="icon">🏢</div>
+            <div>
+              <h4>Kantor Pusat</h4>
+              <p>Jl. Merdeka No. 123, Jakarta Pusat 10110</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- FORM KONTAK -->
+        <div class="form-wrapper" style="max-width:100%;">
+          <div class="form-title" style="font-size:1rem;">Kirim Pesan</div>
+          <div id="alertKontak"></div>
+
+          <div class="form-group">
+            <label>Nama Lengkap <span class="req">*</span></label>
+            <input type="text" class="form-control" id="kontakNama" placeholder="Nama Anda"/>
+            <div class="error-msg" id="err-kNama">Nama harus diisi.</div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Email <span class="req">*</span></label>
+              <input type="email" class="form-control" id="kontakEmail" placeholder="email@contoh.com"/>
+              <div class="error-msg" id="err-kEmail">Email tidak valid.</div>
+            </div>
+            <div class="form-group">
+              <label>No. Telepon</label>
+              <input type="tel" class="form-control" id="kontakTelp" placeholder="08xxxxxxxxxx"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Kategori Pertanyaan <span class="req">*</span></label>
+            <select class="form-control" id="kontakTopik">
+              <option value="">Pilih Topik</option>
+              <option>Pemesanan Tiket</option>
+              <option>Pembatalan & Refund</option>
+              <option>Reschedule</option>
+              <option>Kehilangan Barang</option>
+              <option>Keluhan Armada</option>
+              <option>Lainnya</option>
+            </select>
+            <div class="error-msg" id="err-kTopik">Pilih kategori pertanyaan.</div>
+          </div>
+          <div class="form-group">
+            <label>Pesan <span class="req">*</span></label>
+            <textarea class="form-control" id="kontakPesan" rows="4" placeholder="Tuliskan pertanyaan atau keluhan Anda..." style="resize:vertical;"></textarea>
+            <div class="error-msg" id="err-kPesan">Pesan harus diisi.</div>
+            <div style="text-align:right; font-size:.78rem; color:var(--muted); margin-top:.2rem;" id="charCount">0 / 500 karakter</div>
+          </div>
+          <div class="form-group">
+            <label>Kode Booking (Opsional)</label>
+            <input type="text" class="form-control" id="kontakKode" placeholder="Jika berkaitan dengan pesanan tertentu"/>
+          </div>
+
+          <!-- Rating layanan -->
+          <div class="form-group">
+            <label>Nilai Layanan Kami</label>
+            <div id="ratingWrap" style="display:flex; gap:.4rem; font-size:1.8rem; cursor:pointer; margin-top:.3rem;">
+              <span class="star" data-v="1" onclick="setRating(1)">☆</span>
+              <span class="star" data-v="2" onclick="setRating(2)">☆</span>
+              <span class="star" data-v="3" onclick="setRating(3)">☆</span>
+              <span class="star" data-v="4" onclick="setRating(4)">☆</span>
+              <span class="star" data-v="5" onclick="setRating(5)">☆</span>
+            </div>
+            <input type="hidden" id="nilaiRating" value="0"/>
+          </div>
+
+          <button class="btn btn-primary" style="width:100%; justify-content:center;" onclick="kirimKontak()">
+            📤 Kirim Pesan
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">🚌 <span>Bus</span>Nusantara</div>
+      <p>Platform pemesanan tiket bus terpercaya yang menghubungkan kota-kota di seluruh Indonesia.</p>
+    </div>
+    <div class="footer-col"><h4>Layanan</h4><ul><li><a href="pesananTiket.html">Pesan Tiket</a></li><li><a href="#">Cek Status</a></li><li><a href="#">Reschedule</a></li></ul></div>
+    <div class="footer-col"><h4>Perusahaan</h4><ul><li><a href="#">Tentang Kami</a></li><li><a href="berita.html">Berita</a></li><li><a href="#">Karier</a></li></ul></div>
+    <div class="footer-col"><h4>Bantuan</h4><ul><li><a href="bantuan.html">FAQ</a></li><li><a href="bantuan.html">Hubungi Kami</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">© 2025 BusNusantara. All rights reserved.</div>
+</footer>
+
+<div class="toast" id="toastMsg"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
+
+
+
+

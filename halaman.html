@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BusNusantara – Tiket Bus Online Terpercaya</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+
+<!-- NAVBAR -->
+<nav>
+  <div class="nav-brand">🚌 <span>Bus</span>Nusantara</div>
+  <ul class="nav-links">
+    <li><a href="halaman.html" class="active">Beranda</a></li>
+    <li><a href="pesananTiket.html">Pesan Tiket</a></li>
+    <li><a href="berita.html">Berita</a></li>
+    <li><a href="bantuan.html">Bantuan</a></li>
+  </ul>
+  <a href="pesananTiket.html" class="btn btn-primary">Beli Tiket</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Perjalanan Nyaman,<br/>Harga <span>Terjangkau</span></h1>
+  <p>Pesan tiket bus antarkota online dengan mudah, aman, dan cepat. Lebih dari 500 rute tersedia di seluruh Indonesia.</p>
+
+  <!-- FORM PENCARIAN TIKET (inline hero) -->
+  <form class="search-box" onsubmit="cariTiket(event)">
+    <div>
+      <label>Kota Asal</label>
+      <select class="form-control" id="asalKota" required>
+        <option value="">Pilih Kota</option>
+        <option>Banda Aceh</option>
+        <option>Medan</option>
+        <option>Padang</option>
+        <option>Pekanbaru</option>
+        <option>Jakarta</option>
+        <option>Bandung</option>
+        <option>Semarang</option>
+        <option>Yogyakarta</option>
+        <option>Surabaya</option>
+        <option>Makassar</option>
+      </select>
+    </div>
+    <div>
+      <label>Kota Tujuan</label>
+      <select class="form-control" id="tujuanKota" required>
+        <option value="">Pilih Kota</option>
+        <option>Banda Aceh</option>
+        <option>Medan</option>
+        <option>Padang</option>
+        <option>Pekanbaru</option>
+        <option>Jakarta</option>
+        <option>Bandung</option>
+        <option>Semarang</option>
+        <option>Yogyakarta</option>
+        <option>Surabaya</option>
+        <option>Makassar</option>
+      </select>
+    </div>
+    <div>
+      <label>Tanggal Berangkat</label>
+      <input type="date" class="form-control" id="tglBerangkat" required/>
+    </div>
+    <div>
+      <label>&nbsp;</label>
+      <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">🔍 Cari</button>
+    </div>
+  </form>
+</div>
+
+<!-- FITUR UNGGULAN -->
+<section class="section" style="background:var(--white);">
+  <div class="container">
+    <p class="section-sub" style="text-align:center; font-size:.8rem; text-transform:uppercase; font-weight:700; letter-spacing:1px; color:var(--accent); margin-bottom:.4rem;">Mengapa Kami?</p>
+    <h2 class="section-title" style="text-align:center;">Layanan Terbaik <span>BusNusantara</span></h2>
+    <p class="section-sub" style="text-align:center;">Kami menghadirkan kemudahan perjalanan dari genggaman Anda</p>
+    <div class="feature-list">
+      <div class="feature-item">
+        <div class="feature-icon">🛡️</div>
+        <div>
+          <h4>Pembayaran Aman</h4>
+          <p>Mendukung QRIS, transfer bank, dan dompet digital. Transaksi terenkripsi penuh.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">📍</div>
+        <div>
+          <h4>Lacak Bus Real-Time</h4>
+          <p>Pantau posisi bus secara langsung agar Anda tidak perlu menunggu lama.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🎫</div>
+        <div>
+          <h4>E-Tiket Instan</h4>
+          <p>Tiket langsung dikirim ke email dan WhatsApp dalam hitungan detik.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">↩️</div>
+        <div>
+          <h4>Reschedule Mudah</h4>
+          <p>Ubah jadwal hingga 2 jam sebelum keberangkatan tanpa biaya tambahan.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DESTINASI POPULER -->
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">Rute <span>Populer</span></h2>
+    <p class="section-sub">Destinasi favorit pelanggan BusNusantara bulan ini</p>
+    <div class="card-grid" id="ruteCards">
+      <!-- Kartu dibuat oleh JS -->
+    </div>
+  </div>
+</section>
+
+<!-- PROMO BANNER -->
+<section style="background: linear-gradient(135deg,#1A3A5C,#0f2540); padding:2.5rem 2rem; color:var(--white); text-align:center;">
+  <div class="container">
+    <p style="font-size:.8rem; text-transform:uppercase; font-weight:700; letter-spacing:1px; color:var(--accent); margin-bottom:.5rem;">Penawaran Terbatas</p>
+    <h2 style="font-size:1.8rem; font-weight:800; margin-bottom:.6rem;">Diskon 30% untuk Pemesanan <span style="color:var(--accent);">Hari Ini!</span></h2>
+    <p style="color:rgba(255,255,255,.7); margin-bottom:1.4rem; max-width:500px; margin-left:auto; margin-right:auto;">Gunakan kode promo <strong style="color:var(--accent);">BUSHEMAT30</strong> saat checkout. Berlaku untuk semua rute.</p>
+    <a href="pesananTiket.html" class="btn btn-primary" style="font-size:1rem; padding:.8rem 2rem;">Pesan Sekarang</a>
+  </div>
+</section>
+
+<!-- STATISTIK -->
+<section class="section" style="background:var(--white);">
+  <div class="container">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1.5rem; text-align:center;">
+      <div>
+        <div style="font-size:2.2rem; font-weight:800; color:var(--accent);" id="statPenumpang">0</div>
+        <div style="font-size:.88rem; color:var(--muted);">Penumpang per Bulan</div>
+      </div>
+      <div>
+        <div style="font-size:2.2rem; font-weight:800; color:var(--accent);" id="statRute">0</div>
+        <div style="font-size:.88rem; color:var(--muted);">Rute Aktif</div>
+      </div>
+      <div>
+        <div style="font-size:2.2rem; font-weight:800; color:var(--accent);" id="statArmada">0</div>
+        <div style="font-size:.88rem; color:var(--muted);">Armada Bus</div>
+      </div>
+      <div>
+        <div style="font-size:2.2rem; font-weight:800; color:var(--accent);" id="statRating">0</div>
+        <div style="font-size:.88rem; color:var(--muted);">Rating Pelanggan</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">🚌 <span>Bus</span>Nusantara</div>
+      <p>Platform pemesanan tiket bus terpercaya yang menghubungkan kota-kota di seluruh Indonesia sejak 2018.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Layanan</h4>
+      <ul>
+        <li><a href="pesananTiket.html">Pesan Tiket</a></li>
+        <li><a href="#">Cek Status</a></li>
+        <li><a href="#">Reschedule</a></li>
+        <li><a href="#">Refund</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Perusahaan</h4>
+      <ul>
+        <li><a href="#">Tentang Kami</a></li>
+        <li><a href="berita.html">Berita</a></li>
+        <li><a href="#">Karier</a></li>
+        <li><a href="#">Mitra Agen</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Bantuan</h4>
+      <ul>
+        <li><a href="bantuan.html">FAQ</a></li>
+        <li><a href="bantuan.html">Hubungi Kami</a></li>
+        <li><a href="#">Kebijakan Privasi</a></li>
+        <li><a href="#">Syarat & Ketentuan</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2025 BusNusantara. All rights reserved.</div>
+</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toastMsg"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
