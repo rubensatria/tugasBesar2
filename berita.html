@@ -9,9 +9,9 @@
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-
-
-
+ 
+ 
+ 
 <!-- NAVBAR -->
 <nav>
   <div class="nav-brand">🚌 <span>Bus</span>Nusantara</div>
@@ -23,29 +23,29 @@
   </ul>
   <a href="pesananTiket.html" class="btn btn-primary">Beli Tiket</a>
 </nav>
-
+ 
 <!-- HERO KECIL -->
 <div style="background:linear-gradient(135deg,var(--primary),#0f2540); padding:2rem; color:var(--white); text-align:center;">
   <h1 style="font-size:1.8rem; font-weight:800;">Berita & <span style="color:var(--accent);">Pengumuman</span></h1>
   <p style="color:rgba(255,255,255,.7); margin-top:.3rem;">Informasi terkini seputar layanan dan promo BusNusantara</p>
 </div>
-
+ 
 <!-- KONTEN BERITA -->
 <section class="section">
   <div class="container">
-
+ 
     <!-- KARTU BERITA UTAMA -->
     <h2 class="section-title">Berita <span>Terbaru</span></h2>
     <p class="section-sub">Update terkini dari BusNusantara</p>
     <div class="berita-grid" id="beritaGrid"></div>
-
+ 
     <!-- DIVIDER -->
     <div style="border-top:2px solid var(--border); margin:2.5rem 0;"></div>
-
+ 
     <!-- TABEL RIWAYAT PENGUMUMAN -->
     <h2 class="section-title" style="margin-bottom:.4rem;">📋 Riwayat <span>Pengumuman</span></h2>
     <p class="section-sub">Arsip semua pengumuman resmi BusNusantara</p>
-
+ 
     <!-- Filter Tabel -->
     <div class="table-filters">
       <input type="text" id="searchPengumuman" placeholder="🔍 Cari pengumuman..." oninput="filterTabel()" style="min-width:220px;"/>
@@ -65,7 +65,7 @@
       <button class="btn btn-outline btn-sm" onclick="resetFilter()">Reset</button>
       <span id="jumlahHasil" style="margin-left:auto; font-size:.85rem; color:var(--muted);"></span>
     </div>
-
+ 
     <div class="table-wrapper">
       <table>
         <thead>
@@ -86,13 +86,13 @@
         </tfoot>
       </table>
     </div>
-
+ 
     <!-- PAGINATION -->
     <div style="display:flex; justify-content:center; gap:.5rem; margin-top:1.2rem;" id="pagination"></div>
-
+ 
   </div>
 </section>
-
+ 
 <!-- FOOTER -->
 <footer>
   <div class="footer-grid">
@@ -106,9 +106,9 @@
   </div>
   <div class="footer-bottom">© 2025 BusNusantara. All rights reserved.</div>
 </footer>
-
+ 
 <div class="toast" id="toastMsg"></div>
-
+ 
 <!-- MODAL -->
 <div id="modalOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:200; align-items:center; justify-content:center;">
   <div style="background:var(--white); border-radius:var(--radius); padding:2rem; max-width:520px; width:90%; position:relative;">
@@ -116,6 +116,8 @@
     <div id="modalContent"></div>
   </div>
 </div>
-
+ 
+<script src="script.js"></script>
 </body>
 </html>
+ 

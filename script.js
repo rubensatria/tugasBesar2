@@ -8,9 +8,25 @@ const ruteData = [
   { dari:"Makassar", ke:"Pare-Pare", harga:"Rp 75.000", durasi:"4 jam", kelas:"Ekonomi AC" },
 ];
 
+// Pemetaan label kelas (dipakai di kartu rute) -> value pada <select> kelasLayanan di pesananTiket.html
+const KELAS_LABEL_TO_VALUE = { 'Ekonomi AC': 'ekonomi', 'Eksekutif': 'eksekutif', 'VIP Sleeper': 'vip' };
+
+// Pemetaan harga khusus per rute (diambil dari kartu Rute Populer di halaman.html)
+// Key: "kotaAsal|kotaTujuan|kelas" -> harga dalam angka (bukan string)
+// Dipakai di pesananTiket.html supaya harga yang muncul saat checkout SAMA dengan yang ditampilkan di kartu rute populer
+const RUTE_HARGA_MAP = {};
+ruteData.forEach(r => {
+  const kelasVal = KELAS_LABEL_TO_VALUE[r.kelas] || '';
+  const angkaHarga = parseInt(r.harga.replace(/[^0-9]/g, ''), 10);
+  RUTE_HARGA_MAP[`${r.dari}|${r.ke}|${kelasVal}`] = angkaHarga;
+});
+
 function renderRuteCards() {
   const wrap = document.getElementById('ruteCards');
-  wrap.innerHTML = ruteData.map(r => `
+  wrap.innerHTML = ruteData.map(r => {
+    const kelasVal = KELAS_LABEL_TO_VALUE[r.kelas] || '';
+    const link = `pesananTiket.html?dari=${encodeURIComponent(r.dari)}&ke=${encodeURIComponent(r.ke)}&kelas=${encodeURIComponent(kelasVal)}`;
+    return `
     <div class="card">
       <div class="card-body" style="padding:1.3rem;">
         <span class="card-tag">${r.kelas}</span>
@@ -20,11 +36,12 @@ function renderRuteCards() {
             <div style="font-size:1.2rem; font-weight:800; color:var(--accent);">${r.harga}</div>
             <div style="font-size:.78rem; color:var(--muted);">⏱ ${r.durasi}</div>
           </div>
-          <a href="pesananTiket.html" class="btn btn-outline btn-sm">Pesan</a>
+          <a href="${link}" class="btn btn-outline btn-sm">Pesan</a>
         </div>
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
 // ========== Counter Animasi ==========
@@ -45,11 +62,14 @@ function cariTiket(e) {
   e.preventDefault();
   const asal = document.getElementById('asalKota').value;
   const tujuan = document.getElementById('tujuanKota').value;
+  const tgl = document.getElementById('tglBerangkat').value;
   if (asal === tujuan) {
     showToast('⚠️ Kota asal dan tujuan tidak boleh sama!');
     return;
   }
-  window.location.href = `pesananTiket.html?dari=${encodeURIComponent(asal)}&ke=${encodeURIComponent(tujuan)}`;
+  const params = new URLSearchParams({ dari: asal, ke: tujuan });
+  if (tgl) params.set('tgl', tgl);
+  window.location.href = `pesananTiket.html?${params.toString()}`;
 }
 
 // ========== Toast ==========
@@ -134,7 +154,13 @@ function hitungHarga() {
   const tgl   = document.getElementById('tanggalBrgkt').value;
 
   const kelasLabel = { ekonomi:'Ekonomi AC', eksekutif:'Eksekutif', vip:'VIP Sleeper' };
-  const hargaSatuan = kelas ? HARGA[kelas] : 0;
+
+  // Cek dulu apakah rute + kelas yang dipilih cocok dengan salah satu Rute Populer.
+  // Kalau cocok, pakai harga khusus rute itu (sama seperti yang tampil di kartu halaman beranda).
+  // Kalau tidak cocok (kombinasi kota manual), fallback ke harga generik per kelas.
+  const kunciRute = `${asal}|${tujuan}|${kelas}`;
+  const hargaSatuan = kelas ? (RUTE_HARGA_MAP[kunciRute] ?? HARGA[kelas]) : 0;
+
   const total = hargaSatuan * jumlahPenumpang;
   const diskon = Math.round(total * diskonPersen);
   const bayar = total - diskon;
@@ -146,7 +172,6 @@ function hitungHarga() {
   document.getElementById('sumHargaSatuan').textContent = hargaSatuan ? fmt(hargaSatuan) : '–';
   document.getElementById('sumDiskon').textContent    = diskon > 0 ? '−' + fmt(diskon) : 'Rp 0';
   document.getElementById('sumTotal').textContent     = bayar > 0 ? fmt(bayar) : '–';
-  renderTabelDetailPesanan();
 }
 
 function updateSummary() {
@@ -308,7 +333,6 @@ function lanjutStep4() {
   }
 
   if (!ok) return;
-  renderTabelDetailPesanan();
 
   // buat konfirmasi
   const kelas = document.getElementById('kelasLayanan').value;
@@ -344,6 +368,24 @@ function kembaliStep(n) { setStep(n); }
 function bayarSekarang() {
   const kode = 'BN-' + Math.random().toString(36).toUpperCase().slice(2,8);
   document.getElementById('kodeBooking').textContent = kode;
+
+  // Catat pesanan ke Riwayat Pemesanan — satu baris per penumpang
+  const asal     = document.getElementById('kotaAsal').value;
+  const tujuan   = document.getElementById('kotaTujuan').value;
+  const tgl      = document.getElementById('tanggalBrgkt').value;
+  const email    = document.getElementById('emailPemesan').value;
+  const namaList = Array.from({length: jumlahPenumpang}, (_, i) => document.getElementById('nama_'+i)?.value || '-');
+  const tglFmt   = new Date(tgl).toLocaleDateString('id-ID', { day:'numeric', month:'numeric', year:'numeric' });
+
+  namaList.forEach(nama => {
+    tambahRiwayatPemesanan({
+      nama: nama,
+      rute: `${asal} → ${tujuan}`,
+      email: email,
+      tanggal: tglFmt
+    });
+  });
+
   document.getElementById('panel4').style.display = 'none';
   document.getElementById('panel5').style.display = 'block';
   // Update step semua done
@@ -354,65 +396,64 @@ function bayarSekarang() {
   showToast('🎉 Pembayaran berhasil! Tiket dikirim ke email Anda.');
 }
 
-// ============== TABEL DETAIL PESANAN ==============
-function renderTabelDetailPesanan() {
-  const tbody = document.getElementById('tabelDetailPesanan');
+// ============== RIWAYAT PEMESANAN ==============
+// Disimpan di localStorage supaya tidak hilang saat pindah halaman / refresh
+const RIWAYAT_KEY = 'busnusantara_riwayat_pemesanan';
+
+function muatRiwayatPemesanan() {
+  try {
+    const saved = localStorage.getItem(RIWAYAT_KEY);
+    return saved ? JSON.parse(saved) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function simpanRiwayatPemesanan() {
+  try {
+    localStorage.setItem(RIWAYAT_KEY, JSON.stringify(riwayatPemesananLocal));
+  } catch (e) {
+    // localStorage tidak tersedia (mis. mode private) — abaikan, tetap jalan di memori
+  }
+}
+
+let riwayatPemesananLocal = muatRiwayatPemesanan();
+
+function tambahRiwayatPemesanan(data) {
+  riwayatPemesananLocal.push(data); // pesanan terbaru tampil di bawah
+  simpanRiwayatPemesanan();
+  renderTabelRiwayatPemesanan();
+}
+
+function renderTabelRiwayatPemesanan() {
+  const tbody   = document.getElementById('tabelRiwayatPemesanan');
+  const countEl = document.getElementById('riwayatCount');
   if (!tbody) return;
 
-  const asal    = document.getElementById('kotaAsal')?.value;
-  const tujuan  = document.getElementById('kotaTujuan')?.value;
-  const tgl     = document.getElementById('tanggalBrgkt')?.value;
-  const kelas   = document.getElementById('kelasLayanan')?.value;
-  const bayar   = document.getElementById('metodeBayar')?.value;
-  const email   = document.getElementById('emailPemesan')?.value;
-  const wa      = document.getElementById('noWA')?.value;
+  if (countEl) countEl.textContent = riwayatPemesananLocal.length;
 
-  const kelasLabel   = { ekonomi:'Ekonomi AC', eksekutif:'Eksekutif', vip:'VIP Sleeper' };
-  const metodeLabel  = { qris:'QRIS', bni:'Transfer BNI', bca:'Transfer BCA', mandiri:'Transfer Mandiri', gopay:'GoPay', ovo:'OVO' };
-  const hargaSatuan  = kelas ? HARGA[kelas] : 0;
-  const total        = hargaSatuan * jumlahPenumpang;
-  const diskon       = Math.round(total * diskonPersen);
-  const bayarTotal   = total - diskon;
-
-  const tglFmt = tgl
-    ? new Date(tgl).toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' })
-    : null;
-
-  const rows = [
-    { label: '🗺️ Rute',         value: asal && tujuan ? `${asal} → ${tujuan}` : null },
-    { label: '📅 Tanggal',       value: tglFmt },
-    { label: '💺 Kelas',         value: kelas ? kelasLabel[kelas] : null },
-    { label: '👥 Penumpang',     value: `${jumlahPenumpang} orang` },
-    { label: '🪑 Kursi',         value: kursiDipilih.length ? kursiDipilih.join(', ') : null },
-    { label: '💰 Harga/kursi',   value: hargaSatuan ? fmt(hargaSatuan) : null },
-    { label: '🏷️ Diskon',        value: diskon > 0 ? `−${fmt(diskon)} (${diskonPersen*100}%)` : 'Rp 0', discount: diskon > 0 },
-    { label: '💳 Pembayaran',    value: bayar ? metodeLabel[bayar] : null },
-    { label: '📧 Email',         value: email || null },
-    { label: '📱 WhatsApp',      value: wa || null },
-    { label: '🧾 Total Bayar',   value: bayarTotal > 0 ? fmt(bayarTotal) : null, isTotal: true },
-  ];
-
-  const hasAnyValue = rows.some(r => r.value !== null && r.value !== 'Rp 0');
-
-  if (!hasAnyValue) {
-    tbody.innerHTML = `<tr><td colspan="2" style="text-align:center; color:var(--muted); font-size:.85rem; padding:1rem;">Isi form untuk melihat detail pesanan</td></tr>`;
+  if (riwayatPemesananLocal.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" class="riwayat-empty">Belum ada pesanan yang tercatat</td></tr>`;
     return;
   }
 
-  tbody.innerHTML = rows.map(r => {
-    if (!r.value || (!r.isTotal && !r.discount && r.value === 'Rp 0')) return '';
-    const valStyle = r.isTotal
-      ? 'font-weight:800; color:var(--accent); font-size:1rem;'
-      : r.discount
-        ? 'color:var(--success); font-weight:600;'
-        : 'font-weight:600;';
-    const rowStyle = r.isTotal ? 'background:var(--light);' : '';
-    return `
-      <tr style="${rowStyle}">
-        <td style="color:var(--muted); font-size:.85rem; width:45%;">${r.label}</td>
-        <td style="${valStyle} font-size:.88rem;">${r.value}</td>
-      </tr>`;
-  }).join('');
+  tbody.innerHTML = riwayatPemesananLocal.map((r, i) => `
+    <tr>
+      <td class="riwayat-no">${i + 1}</td>
+      <td class="riwayat-nama">${r.nama}</td>
+      <td class="riwayat-rute">${r.rute}</td>
+      <td class="riwayat-email">${r.email}</td>
+      <td>${r.tanggal}</td>
+    </tr>
+  `).join('');
+}
+
+function hapusRiwayatPemesanan() {
+  if (riwayatPemesananLocal.length === 0) return;
+  riwayatPemesananLocal = [];
+  simpanRiwayatPemesanan();
+  renderTabelRiwayatPemesanan();
+  showToast('🗑️ Riwayat pemesanan dikosongkan.');
 }
 
 // ============== INIT (pesananTiket.html only) ==============
@@ -420,7 +461,7 @@ if (document.getElementById('tanggalBrgkt')) {
   document.getElementById('tanggalBrgkt').min = new Date().toISOString().split('T')[0];
 }
 
-// Ambil query params dari halaman beranda
+// Ambil query params dari halaman beranda (pencarian tiket / kartu rute populer)
 if (document.getElementById('kotaAsal')) {
   const params = new URLSearchParams(window.location.search);
   if (params.get('dari')) {
@@ -431,19 +472,17 @@ if (document.getElementById('kotaAsal')) {
     const sel = document.getElementById('kotaTujuan');
     [...sel.options].forEach(o => { if (o.text === params.get('ke')) o.selected = true; });
   }
+  if (params.get('tgl')) {
+    document.getElementById('tanggalBrgkt').value = params.get('tgl');
+  }
+  if (params.get('kelas')) {
+    document.getElementById('kelasLayanan').value = params.get('kelas');
+  }
   hitungHarga();
+}
 
-  // Update tabel detail saat input Step 3 berubah (delegasi event)
-  document.addEventListener('change', function(e) {
-    if (['emailPemesan','noWA','metodeBayar'].includes(e.target.id)) {
-      renderTabelDetailPesanan();
-    }
-  });
-  document.addEventListener('input', function(e) {
-    if (['emailPemesan','noWA'].includes(e.target.id)) {
-      renderTabelDetailPesanan();
-    }
-  });
+if (document.getElementById('tabelRiwayatPemesanan')) {
+  renderTabelRiwayatPemesanan();
 }
 
 
@@ -654,13 +693,15 @@ function bukaBerita(encoded) {
 function tutupModal() {
   document.getElementById('modalOverlay').style.display = 'none';
 }
-document.getElementById('modalOverlay').addEventListener('click', e => {
-  if (e.target === document.getElementById('modalOverlay')) tutupModal();
-});
+if (document.getElementById('modalOverlay')) {
+  document.getElementById('modalOverlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('modalOverlay')) tutupModal();
+  });
+}
 
 // ======= INIT =======
-renderBerita();
-renderTabel();
+if (document.getElementById('beritaGrid')) renderBerita();
+if (document.getElementById('tabelBody')) renderTabel();
 
 
 
