@@ -490,62 +490,62 @@ if (document.getElementById('tabelRiwayatPemesanan')) {
 // ======= DATA BERITA =======
 const beritaData = [
   {
-    judul: "Armada Bus Baru Beroperasi di Rute Aceh–Medan",
-    ringkasan: "BusNusantara meluncurkan 10 unit bus VIP Sleeper terbaru dengan fasilitas premium untuk rute Banda Aceh–Medan mulai bulan ini.",
-    tanggal: "5 Juni 2025",
-    kategori: "Armada",
-    emoji: "🚌"
+    judul: "Cara Mendapatkan Diskon Pelajar di BusKu:",
+    ringkasan: "Mahasiswa dan pelajar bisa hemat hingga 10% dengan program khusus BusKu Student. Begini cara daftarnya.",
+    tanggal: "5 Juni 2026",
+    kategori: "promo",
+    gambar: "img/diskon.png"
   },
   {
-    judul: "Diskon Spesial Lebaran 30% Untuk Semua Rute",
-    ringkasan: "Rayakan Lebaran dengan perjalanan hemat! Dapatkan diskon 30% untuk pemesanan tiket dengan kode BUSHEMAT30 hingga 10 Juni 2025.",
-    tanggal: "20 Mei 2025",
-    kategori: "Promo",
-    emoji: "🎉"
+    judul: "BusKu Luncurkan Fitur Lacak Bus Real-Time di Aplikasi Terbaru",
+    ringkasan: "Kini penumpang bisa memantau posisi bus secara langsung melalui peta interaktif di aplikasi BusKu versi 3.0.",
+    tanggal: "20 Mei 2026",
+    kategori: "operasional",
+    gambar: "img/pelacakan.png"
   },
   {
-    judul: "Peluncuran Fitur Lacak Bus Real-Time",
-    ringkasan: "Kini Anda bisa memantau posisi bus secara langsung melalui aplikasi dan website BusNusantara. Tidak perlu menunggu lama di terminal.",
-    tanggal: "1 Mei 2025",
+    judul: "BusKu Renovasi Terminal dengan Fasilitas Modern untuk Kenyamanan Penumpang",
+    ringkasan: "BusKu melakukan renovasi terminal dengan menghadirkan fasilitas modern seperti ruang tunggu nyaman, area charging, dan sistem tiket digital untuk meningkatkan kenyamanan penumpang.",
+    tanggal: "1 Mei 2026",
     kategori: "Operasional",
-    emoji: "📍"
+    gambar: "img/renov.png"
   },
   {
-    judul: "Perubahan Jadwal Rute Jakarta–Surabaya",
-    ringkasan: "Mulai 15 Juni 2025, jadwal keberangkatan rute Jakarta–Surabaya mengalami penyesuaian. Harap cek jadwal terbaru sebelum memesan.",
-    tanggal: "12 April 2025",
+    judul: "Destinasi Wisata Terpopuler yang Bisa Dijangkau Naik Bus dari Medan",
+    ringkasan: "Liburan hemat dan seru! Ini dia 8 destinasi wisata terbaik yang bisa kamu kunjungi langsung dengan bus dari kota-kota di Medan.",
+    tanggal: "12 April 2026",
     kategori: "Operasional",
-    emoji: "🕐"
+    gambar: "img/DestinasiWisata.png"
   },
   {
-    judul: "Kebijakan Baru Reschedule Tiket Tanpa Biaya",
-    ringkasan: "BusNusantara memberlakukan kebijakan reschedule gratis hingga 2 jam sebelum keberangkatan untuk semua kelas layanan.",
-    tanggal: "3 April 2025",
+    judul: "Bayar Tiket Bus Kini Lebih Mudah dengan QRIS dan Dompet Digital",
+    ringkasan: "BusKu kini mendukung lebih dari 12 metode pembayaran termasuk GoPay, OVO, Dana, ShopeePay, dan semua bank nasional.",
+    tanggal: "3 April 2026",
     kategori: "Kebijakan",
-    emoji: "📋"
+    gambar: "img/qrisBus.png"
   },
   {
-    judul: "Tambah Rute Baru: Makassar–Pare-Pare",
-    ringkasan: "Mulai April 2025, BusNusantara membuka rute baru Makassar–Pare-Pare dengan 3 jadwal keberangkatan setiap harinya.",
-    tanggal: "28 Maret 2025",
+    judul: "5 Tips Agar Perjalanan Bus Malam Tetap Nyaman dan Aman",
+    ringkasan: "Perjalanan malam dengan bus bisa sangat menyenangkan jika kamu tahu triknya. Simak panduan lengkap dari tim BusKu.",
+    tanggal: "28 Maret 2026",
     kategori: "Operasional",
-    emoji: "🗺️"
+    gambar: "img/perjalananMalam.png"
   },
 ];
 
 // ======= DATA PENGUMUMAN =======
 const pengumumanData = [
-  { judul:"Diskon Hari Kemerdekaan 20% Semua Rute", kategori:"Promo", tanggal:"2025-08-01", status:"Akan Datang" },
-  { judul:"Armada Bus Baru Rute Aceh–Medan Beroperasi", kategori:"Armada", tanggal:"2025-06-05", status:"Aktif" },
-  { judul:"Diskon Lebaran 30% Semua Rute", kategori:"Promo", tanggal:"2025-05-20", status:"Berakhir" },
-  { judul:"Fitur Lacak Bus Real-Time Diluncurkan", kategori:"Operasional", tanggal:"2025-05-01", status:"Aktif" },
-  { judul:"Reschedule Gratis Diberlakukan Mulai April 2025", kategori:"Kebijakan", tanggal:"2025-04-03", status:"Aktif" },
-  { judul:"Rute Baru Makassar–Pare-Pare Dibuka", kategori:"Operasional", tanggal:"2025-03-28", status:"Aktif" },
-  { judul:"Promo Akhir Tahun 25% Untuk Member", kategori:"Promo", tanggal:"2024-12-20", status:"Berakhir" },
-  { judul:"Perubahan Terminal Keberangkatan Yogyakarta", kategori:"Operasional", tanggal:"2024-11-15", status:"Berakhir" },
-  { judul:"Peluncuran Program Loyalitas BusPoints", kategori:"Kebijakan", tanggal:"2024-10-01", status:"Aktif" },
-  { judul:"Renovasi Bus Kelas VIP Selesai", kategori:"Armada", tanggal:"2024-09-10", status:"Berakhir" },
-  { judul:"Kerjasama dengan GoPay dan OVO Resmi", kategori:"Kebijakan", tanggal:"2024-08-05", status:"Aktif" },
+  { judul:"Cara Mendapatkan Diskon Pelajar di BusKu", kategori:"Promo", tanggal:"2026-08-01", status:"Akan Datang" },
+  { judul:"Armada Bus Baru Rute Aceh–Medan Beroperasi", kategori:"Armada", tanggal:"2026-06-05", status:"Aktif" },
+  { judul:"Diskon Lebaran 30% Semua Rute", kategori:"Promo", tanggal:"2026-04-20", status:"Berakhir" },
+  { judul:"BusKu Luncurkan Fitur Lacak Bus Real-Time di Aplikasi Terbaru", kategori:"Operasional", tanggal:"2025-05-01", status:"Aktif" },
+  { judul:"Reschedule Gratis Diberlakukan Mulai April 2026", kategori:"Kebijakan", tanggal:"2026-04-03", status:"Aktif" },
+  { judul:"Rute Baru Medan–siantar Dibuka", kategori:"Operasional", tanggal:"2026-03-28", status:"Aktif" },
+  { judul:"Promo Akhir Tahun 25% Untuk Member", kategori:"Promo", tanggal:"2026-12-20", status:"Akan Datang" },
+  { judul:"Perubahan Terminal Keberangkatan Yogyakarta", kategori:"Operasional", tanggal:"2025-11-15", status:"Berakhir" },
+  { judul:"Peluncuran Program Loyalitas BusPoints", kategori:"Kebijakan", tanggal:"2026-05-01", status:"Aktif" },
+  { judul:"BusKu Renovasi Terminal dengan Fasilitas Modern untuk Kenyamanan Penumpang", kategori:"Armada", tanggal:"2025-09-10", status:"Berakhir" },
+  { judul:"Bayar Tiket Bus Kini Lebih Mudah dengan QRIS dan Dompet Digital", kategori:"Kebijakan", tanggal:"2026-04-03", status:"Aktif" },
   { judul:"Promo Double Miles Akhir Pekan", kategori:"Promo", tanggal:"2024-07-01", status:"Berakhir" },
 ];
 
@@ -561,7 +561,9 @@ function renderBerita() {
   const grid = document.getElementById('beritaGrid');
   grid.innerHTML = beritaData.map(b => `
     <div class="berita-card">
-      <div style="background:linear-gradient(135deg,var(--primary),#0f2540); height:160px; display:flex; align-items:center; justify-content:center; font-size:4rem;">${b.emoji}</div>
+      <div class="berita-image-wrapper">
+        <img src="${b.gambar}" alt="${b.judul}" class="berita-img-content" onerror="this.src='img/placeholder.png';">
+      </div>
       <div class="berita-body">
         <span class="card-tag">${b.kategori}</span>
         <h3>${b.judul}</h3>
