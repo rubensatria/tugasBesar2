@@ -25,41 +25,41 @@
 </nav>
 
 <!-- HERO KECIL -->
-<div style="background:linear-gradient(135deg,var(--primary),#0f2540); padding:2rem; color:var(--white); text-align:center;">
-  <h1 style="font-size:1.8rem; font-weight:800;">Pusat <span style="color:var(--accent);">Bantuan</span></h1>
-  <p style="color:rgba(255,255,255,.7); margin-top:.3rem;">Ada pertanyaan? Kami siap membantu Anda 24 jam sehari</p>
+<div class="hero-kecil">
+  <h1 class="hero-kecil__title">Pusat <span class="hero-kecil__accent">Bantuan</span></h1>
+  <p class="hero-kecil__sub">Ada pertanyaan? Kami siap membantu Anda 24 jam sehari</p>
 </div>
 
 <section class="section">
   <div class="container">
 
     <!-- CEK STATUS PESANAN (JavaScript + Tabel) -->
-    <div style="background:var(--white); border-radius:var(--radius); padding:2rem; box-shadow:var(--shadow); margin-bottom:2.5rem;">
-      <h2 class="section-title" style="margin-bottom:.4rem;">🔍 Cek Status <span>Pesanan</span></h2>
-      <p style="color:var(--muted); font-size:.9rem; margin-bottom:1.2rem;">Masukkan kode booking Anda untuk melihat status terkini</p>
-      <div style="display:flex; gap:.8rem; flex-wrap:wrap;">
-        <input type="text" id="inputKodeBooking" class="form-control" placeholder="Contoh: BN-ABC123" style="max-width:280px;" oninput="this.value=this.value.toUpperCase()"/>
+    <div class="card-cek-status">
+      <h2 class="section-title section-title--mb-sm">🔍 Cek Status <span>Pesanan</span></h2>
+      <p class="text-muted-sm">Masukkan kode booking Anda untuk melihat status terkini</p>
+      <div class="cek-status__input-row">
+        <input type="text" id="inputKodeBooking" class="form-control cek-status__input" placeholder="Contoh: BN-ABC123" oninput="this.value=this.value.toUpperCase()"/>
         <button class="btn btn-primary" onclick="cekStatus()">Cek Sekarang</button>
       </div>
-      <div id="hasilCek" style="margin-top:1.2rem;"></div>
+      <div id="hasilCek" class="cek-status__hasil"></div>
     </div>
 
     <!-- TABEL RIWAYAT PERJALANAN (demo) -->
-    <h2 class="section-title" style="margin-bottom:.4rem;">📊 Riwayat <span>Perjalanan</span></h2>
-    <p style="color:var(--muted); font-size:.9rem; margin-bottom:1rem;">Contoh riwayat perjalanan pelanggan (demo)</p>
+    <h2 class="section-title section-title--mb-sm">📊 Riwayat <span>Perjalanan</span></h2>
+    <p class="text-muted-sm text-muted-sm--mb">Contoh riwayat perjalanan pelanggan (demo)</p>
 
     <div class="table-filters">
-      <input type="text" id="cariRiwayat" placeholder="🔍 Cari rute atau kode..." oninput="filterRiwayat()" style="min-width:220px;"/>
+      <input type="text" id="cariRiwayat" placeholder="🔍 Cari rute atau kode..." oninput="filterRiwayat()" class="table-filters__search"/>
       <select id="filterStatusRiwayat" onchange="filterRiwayat()">
         <option value="">Semua Status</option>
         <option value="Selesai">Selesai</option>
         <option value="Dibatalkan">Dibatalkan</option>
         <option value="Menunggu">Menunggu</option>
       </select>
-      <span id="infoRiwayat" style="margin-left:auto; font-size:.85rem; color:var(--muted);"></span>
+      <span id="infoRiwayat" class="table-filters__info"></span>
     </div>
 
-    <div class="table-wrapper" style="margin-bottom:2.5rem;">
+    <div class="table-wrapper table-wrapper--mb">
       <table>
         <thead>
           <tr>
@@ -79,12 +79,12 @@
     <div class="contact-grid">
       <!-- FAQ -->
       <div>
-        <h2 class="section-title" style="margin-bottom:.4rem;">❓ Pertanyaan <span>Umum (FAQ)</span></h2>
-        <p style="color:var(--muted); font-size:.9rem; margin-bottom:1.2rem;">Klik pertanyaan untuk melihat jawaban</p>
+        <h2 class="section-title section-title--mb-sm">❓ Pertanyaan <span>Umum (FAQ)</span></h2>
+        <p class="text-muted-sm text-muted-sm--mb-lg">Klik pertanyaan untuk melihat jawaban</p>
 
         <!-- Search FAQ -->
-        <div style="margin-bottom:1rem;">
-          <input type="text" class="form-control" id="cariFAQ" placeholder="🔍 Cari pertanyaan..." oninput="filterFAQ()" style="max-width:400px;"/>
+        <div class="faq-search">
+          <input type="text" class="form-control" id="cariFAQ" placeholder="🔍 Cari pertanyaan..." oninput="filterFAQ()"/>
         </div>
 
         <div class="faq-list" id="faqList"></div>
@@ -92,10 +92,10 @@
 
       <!-- FORM KONTAK -->
       <div>
-        <h2 class="section-title" style="margin-bottom:.4rem;">📬 Hubungi <span>Kami</span></h2>
-        <p style="color:var(--muted); font-size:.9rem; margin-bottom:1.4rem;">Tim kami akan merespons dalam 1x24 jam</p>
+        <h2 class="section-title section-title--mb-sm">📬 Hubungi <span>Kami</span></h2>
+        <p class="text-muted-sm text-muted-sm--mb-lg">Tim kami akan merespons dalam 1x24 jam</p>
 
-        <div class="contact-info" style="margin-bottom:1.5rem;">
+        <div class="contact-info contact-info--mb">
           <div class="contact-card">
             <div class="icon">📞</div>
             <div>
@@ -120,8 +120,8 @@
         </div>
 
         <!-- FORM KONTAK -->
-        <div class="form-wrapper" style="max-width:100%;">
-          <div class="form-title" style="font-size:1rem;">Kirim Pesan</div>
+        <div class="form-wrapper form-wrapper--full">
+          <div class="form-title form-title--sm">Kirim Pesan</div>
           <div id="alertKontak"></div>
 
           <div class="form-group">
@@ -155,9 +155,9 @@
           </div>
           <div class="form-group">
             <label>Pesan <span class="req">*</span></label>
-            <textarea class="form-control" id="kontakPesan" rows="4" placeholder="Tuliskan pertanyaan atau keluhan Anda..." style="resize:vertical;"></textarea>
+            <textarea class="form-control textarea-resizable" id="kontakPesan" rows="4" placeholder="Tuliskan pertanyaan atau keluhan Anda..."></textarea>
             <div class="error-msg" id="err-kPesan">Pesan harus diisi.</div>
-            <div style="text-align:right; font-size:.78rem; color:var(--muted); margin-top:.2rem;" id="charCount">0 / 500 karakter</div>
+            <div class="char-count" id="charCount">0 / 500 karakter</div>
           </div>
           <div class="form-group">
             <label>Kode Booking (Opsional)</label>
@@ -167,7 +167,7 @@
           <!-- Rating layanan -->
           <div class="form-group">
             <label>Nilai Layanan Kami</label>
-            <div id="ratingWrap" style="display:flex; gap:.4rem; font-size:1.8rem; cursor:pointer; margin-top:.3rem;">
+            <div id="ratingWrap" class="rating-wrap">
               <span class="star" data-v="1" onclick="setRating(1)">☆</span>
               <span class="star" data-v="2" onclick="setRating(2)">☆</span>
               <span class="star" data-v="3" onclick="setRating(3)">☆</span>
@@ -177,7 +177,7 @@
             <input type="hidden" id="nilaiRating" value="0"/>
           </div>
 
-          <button class="btn btn-primary" style="width:100%; justify-content:center;" onclick="kirimKontak()">
+          <button class="btn btn-primary btn--full-center" onclick="kirimKontak()">
             📤 Kirim Pesan
           </button>
         </div>
@@ -206,7 +206,3 @@
 <script src="script.js"></script>
 </body>
 </html>
-
-
-
-
