@@ -1,4 +1,20 @@
-// js halaman
+/* ================================
+   JAVASCRIPT — BusKu
+   DOM, Event Handling, Render Data, Multi-Step Form, localStorage
+   ================================ */
+ 
+// Catatan struktur: file ini disusun per halaman (Beranda, Pesan Tiket, Berita, Bantuan).
+// Tiap halaman ditandai dengan blok komentar ═══ di bawah, lalu dipecah lagi jadi
+// sub-bagian dengan blok ───. Karena satu script.js dipakai bersama oleh semua
+// halaman, beberapa fungsi util (mis. showToast) sengaja didefinisikan ulang
+// di tiap bagian — masing-masing hanya aktif sesuai elemen yang ada di halaman itu.
+ 
+// ════════════════════════════════
+// HALAMAN BERANDA (halaman.html)
+// Data rute populer, kartu rute, pencarian tiket cepat, animasi counter statistik
+// ════════════════════════════════
+ 
+// data rute populer yang ditampilkan sebagai kartu di halaman beranda
 const ruteData = [
   { dari:"Banda Aceh", ke:"Medan", harga:"Rp 135.000", durasi:"8 jam", kelas:"Ekonomi AC" },
   { dari:"Medan", ke:"Jakarta", harga:"Rp 280.000", durasi:"24 jam", kelas:"VIP Sleeper" },
@@ -7,10 +23,10 @@ const ruteData = [
   { dari:"Padang", ke:"Pekanbaru", harga:"Rp 95.000", durasi:"6 jam", kelas:"Ekonomi AC" },
   { dari:"Makassar", ke:"Pare-Pare", harga:"Rp 75.000", durasi:"4 jam", kelas:"Ekonomi AC" },
 ];
-
+ 
 // Pemetaan label kelas (dipakai di kartu rute) -> value pada <select> kelasLayanan di pesananTiket.html
 const KELAS_LABEL_TO_VALUE = { 'Ekonomi AC': 'ekonomi', 'Eksekutif': 'eksekutif', 'VIP Sleeper': 'vip' };
-
+ 
 // Pemetaan harga khusus per rute (diambil dari kartu Rute Populer di halaman.html)
 // Key: "kotaAsal|kotaTujuan|kelas" -> harga dalam angka (bukan string)
 // Dipakai di pesananTiket.html supaya harga yang muncul saat checkout SAMA dengan yang ditampilkan di kartu rute populer
@@ -20,7 +36,8 @@ ruteData.forEach(r => {
   const angkaHarga = parseInt(r.harga.replace(/[^0-9]/g, ''), 10);
   RUTE_HARGA_MAP[`${r.dari}|${r.ke}|${kelasVal}`] = angkaHarga;
 });
-
+ 
+// fungsi untuk merender kartu-kartu rute populer ke dalam #ruteCards berdasarkan ruteData
 function renderRuteCards() {
   const wrap = document.getElementById('ruteCards');
   wrap.innerHTML = ruteData.map(r => {
@@ -43,8 +60,9 @@ function renderRuteCards() {
   `;
   }).join('');
 }
-
-// ========== Counter Animasi ==========
+ 
+// ───── COUNTER ANIMASI ─────
+// fungsi untuk menganimasikan angka counter dari 0 ke nilai target (dipakai pada statistik di halaman beranda)
 function animateCounter(id, target, suffix = '', decimals = 0) {
   let start = 0;
   const step = target / 60;
@@ -56,8 +74,9 @@ function animateCounter(id, target, suffix = '', decimals = 0) {
       : Math.floor(start).toLocaleString('id') + suffix;
   }, 25);
 }
-
-// ========== Cari Tiket ==========
+ 
+// ───── CARI TIKET ─────
+// fungsi untuk menangani submit form pencarian tiket di hero, lalu redirect ke halaman pesan tiket dengan query params
 function cariTiket(e) {
   e.preventDefault();
   const asal = document.getElementById('asalKota').value;
@@ -71,25 +90,28 @@ function cariTiket(e) {
   if (tgl) params.set('tgl', tgl);
   window.location.href = `pesananTiket.html?${params.toString()}`;
 }
-
-// ========== Toast ==========
+ 
+// ───── TOAST ─────
+// fungsi untuk menampilkan notifikasi toast sementara di pojok layar
 function showToast(msg) {
   const t = document.getElementById('toastMsg');
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3000);
 }
-
-// ========== Set tanggal min (halaman.html only) ==========
+ 
+// ───── SET TANGGAL MINIMUM (khusus halaman.html) ─────
+// batasi input tanggal berangkat agar tidak bisa memilih tanggal yang sudah lewat
 if (document.getElementById('tglBerangkat')) {
   document.getElementById('tglBerangkat').min = new Date().toISOString().split('T')[0];
 }
-
-// ========== Init (halaman.html only) ==========
+ 
+// ───── INIT (khusus halaman.html) ─────
+// render kartu rute populer saat elemen #ruteCards ada di halaman
 if (document.getElementById('ruteCards')) {
   renderRuteCards();
 }
-
+ 
 // Jalankan counter saat elemen masuk viewport (halaman.html only)
 if (document.getElementById('statPenumpang')) {
   const observer = new IntersectionObserver(entries => {
@@ -103,27 +125,33 @@ if (document.getElementById('statPenumpang')) {
   });
   observer.observe(document.getElementById('statPenumpang'));
 }
-
-
-
-// pesanan tiket
-
-// ============== CONFIG ==============
+ 
+// ════════════════════════════════
+// HALAMAN PESAN TIKET (pesananTiket.html)
+// Form multi-step: pilih rute, kursi, data penumpang, konfirmasi, riwayat pemesanan
+// ════════════════════════════════
+ 
+// ───── CONFIG ─────
+// konfigurasi harga per kelas, daftar kode promo, dan state pemesanan
+// (jumlah penumpang, kursi dipilih/terpesan, persentase diskon)
 const HARGA = { ekonomi: 80000, eksekutif: 150000, vip: 250000 };
 const PROMO = { 'BUSHEMAT30': .30, 'HEMAT10': .10, 'NEWUSER': .15 };
 let jumlahPenumpang = 1;
 let kursiDipilih = [];
 let kursiTerpesan = [3, 7, 12, 18, 24]; // index seat terpesan
 let diskonPersen = 0;
-
-// ============== UTILS ==============
+ 
+// ───── UTILS ─────
+// fungsi untuk memformat angka menjadi format Rupiah
 function fmt(n) { return 'Rp ' + n.toLocaleString('id'); }
+// fungsi untuk menampilkan notifikasi toast sementara di pojok layar
 function showToast(msg) {
   const t = document.getElementById('toastMsg');
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3500);
 }
+// fungsi untuk berpindah antar step form pemesanan (indikator step + panel yang ditampilkan)
 function setStep(n) {
   for (let i = 1; i <= 4; i++) {
     const ind = document.getElementById('step'+i+'Ind');
@@ -136,8 +164,9 @@ function setStep(n) {
   }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
-// ============== COUNTER PENUMPANG ==============
+ 
+// ───── COUNTER PENUMPANG ─────
+// fungsi untuk menambah/mengurangi jumlah penumpang (dibatasi 1–4 orang)
 function ubahPenumpang(delta) {
   jumlahPenumpang = Math.min(4, Math.max(1, jumlahPenumpang + delta));
   document.getElementById('jmlPenumpang').textContent = jumlahPenumpang;
@@ -145,26 +174,27 @@ function ubahPenumpang(delta) {
   hitungHarga();
   updateSummary();
 }
-
-// ============== HARGA ==============
+ 
+// ───── HARGA ─────
+// fungsi untuk menghitung dan menampilkan harga satuan, diskon, dan total ke ringkasan pesanan
 function hitungHarga() {
   const kelas = document.getElementById('kelasLayanan').value;
   const asal  = document.getElementById('kotaAsal').value;
   const tujuan= document.getElementById('kotaTujuan').value;
   const tgl   = document.getElementById('tanggalBrgkt').value;
-
+ 
   const kelasLabel = { ekonomi:'Ekonomi AC', eksekutif:'Eksekutif', vip:'VIP Sleeper' };
-
+ 
   // Cek dulu apakah rute + kelas yang dipilih cocok dengan salah satu Rute Populer.
   // Kalau cocok, pakai harga khusus rute itu (sama seperti yang tampil di kartu halaman beranda).
   // Kalau tidak cocok (kombinasi kota manual), fallback ke harga generik per kelas.
   const kunciRute = `${asal}|${tujuan}|${kelas}`;
   const hargaSatuan = kelas ? (RUTE_HARGA_MAP[kunciRute] ?? HARGA[kelas]) : 0;
-
+ 
   const total = hargaSatuan * jumlahPenumpang;
   const diskon = Math.round(total * diskonPersen);
   const bayar = total - diskon;
-
+ 
   document.getElementById('sumRute').textContent      = (asal && tujuan) ? `${asal} → ${tujuan}` : '–';
   document.getElementById('sumTanggal').textContent   = tgl ? new Date(tgl).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}) : '–';
   document.getElementById('sumKelas').textContent     = kelas ? kelasLabel[kelas] : '–';
@@ -173,13 +203,15 @@ function hitungHarga() {
   document.getElementById('sumDiskon').textContent    = diskon > 0 ? '−' + fmt(diskon) : 'Rp 0';
   document.getElementById('sumTotal').textContent     = bayar > 0 ? fmt(bayar) : '–';
 }
-
+ 
+// fungsi untuk memperbarui ringkasan pesanan (kursi terpilih) setelah hitungHarga()
 function updateSummary() {
   hitungHarga();
   document.getElementById('sumKursi').textContent = kursiDipilih.length ? kursiDipilih.join(', ') : '–';
 }
-
-// ============== PROMO ==============
+ 
+// ───── PROMO ─────
+// fungsi untuk memvalidasi kode promo yang diinput dan menerapkannya ke diskonPersen
 function terapkanPromo() {
   const kode = document.getElementById('kodePromo').value.trim().toUpperCase();
   const info = document.getElementById('promoInfo');
@@ -193,8 +225,9 @@ function terapkanPromo() {
   }
   hitungHarga();
 }
-
-// ============== SEAT PICKER ==============
+ 
+// ───── SEAT PICKER ─────
+// fungsi untuk merender denah kursi bus (status tersedia / dipilih / terpesan)
 function renderSeat() {
   const grid = document.getElementById('seatGrid');
   const layout = [
@@ -218,7 +251,8 @@ function renderSeat() {
     }).join('') + '</div>';
   }).join('');
 }
-
+ 
+// fungsi untuk memilih/membatalkan pilihan kursi saat diklik, lalu memperbarui info & ringkasan
 function toggleSeat(id, booked) {
   if (booked) { showToast('⚠️ Kursi ini sudah dipesan.'); return; }
   const idx = kursiDipilih.indexOf(id);
@@ -238,8 +272,9 @@ function toggleSeat(id, booked) {
     : 'Belum ada kursi dipilih.';
   updateSummary();
 }
-
-// ============== FORM PENUMPANG DINAMIS ==============
+ 
+// ───── FORM PENUMPANG DINAMIS ─────
+// fungsi untuk merender form data penumpang sebanyak jumlahPenumpang yang dipilih
 function renderFormPenumpang() {
   const wrap = document.getElementById('formPenumpangWrap');
   wrap.innerHTML = Array.from({length: jumlahPenumpang}, (_, i) => `
@@ -271,32 +306,34 @@ function renderFormPenumpang() {
     </div>
   `).join('');
 }
-
-// ============== VALIDASI & NAVIGASI STEP ==============
+ 
+// ───── VALIDASI & NAVIGASI STEP ─────
+// fungsi untuk memvalidasi Step 1 (rute & jadwal) sebelum lanjut ke Step 2 (pilih kursi)
 function lanjutStep2() {
   const asal   = document.getElementById('kotaAsal').value;
   const tujuan = document.getElementById('kotaTujuan').value;
   const tgl    = document.getElementById('tanggalBrgkt').value;
   const kelas  = document.getElementById('kelasLayanan').value;
   let ok = true;
-
+ 
   const show = (id, show) => { document.getElementById(id).classList.toggle('show', show); };
   const markErr = (id, err) => { document.getElementById(id).classList.toggle('error', err); };
-
+ 
   show('err-asal',  !asal);   markErr('kotaAsal',  !asal);
   show('err-tujuan',!tujuan); markErr('kotaTujuan',!tujuan);
   show('err-tgl',   !tgl);    markErr('tanggalBrgkt',!tgl);
   show('err-kelas', !kelas);  markErr('kelasLayanan',!kelas);
   if (!asal || !tujuan || !tgl || !kelas) ok = false;
-
+ 
   if (asal && tujuan && asal === tujuan) {
     showToast('⚠️ Kota asal dan tujuan tidak boleh sama!');
     ok = false;
   }
-
+ 
   if (ok) { renderSeat(); setStep(2); }
 }
-
+ 
+// fungsi untuk memvalidasi pilihan kursi sebelum lanjut ke Step 3 (data penumpang)
 function lanjutStep3() {
   if (kursiDipilih.length < jumlahPenumpang) {
     showToast(`⚠️ Pilih ${jumlahPenumpang} kursi terlebih dahulu.`);
@@ -305,35 +342,36 @@ function lanjutStep3() {
   renderFormPenumpang();
   setStep(3);
 }
-
+ 
+// fungsi untuk memvalidasi data penumpang & kontak, lalu menyusun ringkasan konfirmasi pesanan
 function lanjutStep4() {
   const email = document.getElementById('emailPemesan').value;
   const wa    = document.getElementById('noWA').value;
   const bayar = document.getElementById('metodeBayar').value;
   let ok = true;
-
+ 
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   document.getElementById('err-email').classList.toggle('show', !emailValid);
   document.getElementById('emailPemesan').classList.toggle('error', !emailValid);
   if (!emailValid) ok = false;
-
+ 
   const waValid = /^08[0-9]{8,12}$/.test(wa);
   document.getElementById('err-wa').classList.toggle('show', !waValid);
   document.getElementById('noWA').classList.toggle('error', !waValid);
   if (!waValid) ok = false;
-
+ 
   const bayarValid = bayar !== '';
   document.getElementById('err-bayar').classList.toggle('show', !bayarValid);
   if (!bayarValid) ok = false;
-
+ 
   // cek nama penumpang
   for (let i = 0; i < jumlahPenumpang; i++) {
     const nama = document.getElementById('nama_'+i)?.value;
     if (!nama) { showToast('⚠️ Nama penumpang ' + (i+1) + ' harus diisi.'); ok = false; break; }
   }
-
+ 
   if (!ok) return;
-
+ 
   // buat konfirmasi
   const kelas = document.getElementById('kelasLayanan').value;
   const kelasLabel = { ekonomi:'Ekonomi AC', eksekutif:'Eksekutif', vip:'VIP Sleeper' };
@@ -343,7 +381,7 @@ function lanjutStep4() {
   const bayarTotal = total - diskon;
   const namaList = Array.from({length:jumlahPenumpang}, (_,i) => document.getElementById('nama_'+i).value);
   const metodeLabel = { qris:'QRIS', bni:'Transfer BNI', bca:'Transfer BCA', mandiri:'Transfer Mandiri', gopay:'GoPay', ovo:'OVO' };
-
+ 
   document.getElementById('konfirmasiDetail').innerHTML = `
     <div class="alert alert-info" style="margin-bottom:1rem;">Harap periksa kembali detail pesanan Anda sebelum membayar.</div>
     <div class="order-summary">
@@ -362,13 +400,15 @@ function lanjutStep4() {
   `;
   setStep(4);
 }
-
+ 
+// fungsi untuk kembali ke step sebelumnya
 function kembaliStep(n) { setStep(n); }
-
+ 
+// fungsi untuk memproses pembayaran, membuat kode booking, dan mencatat riwayat pemesanan
 function bayarSekarang() {
   const kode = 'BN-' + Math.random().toString(36).toUpperCase().slice(2,8);
   document.getElementById('kodeBooking').textContent = kode;
-
+ 
   // Catat pesanan ke Riwayat Pemesanan — satu baris per penumpang
   const asal     = document.getElementById('kotaAsal').value;
   const tujuan   = document.getElementById('kotaTujuan').value;
@@ -376,7 +416,7 @@ function bayarSekarang() {
   const email    = document.getElementById('emailPemesan').value;
   const namaList = Array.from({length: jumlahPenumpang}, (_, i) => document.getElementById('nama_'+i)?.value || '-');
   const tglFmt   = new Date(tgl).toLocaleDateString('id-ID', { day:'numeric', month:'numeric', year:'numeric' });
-
+ 
   namaList.forEach(nama => {
     tambahRiwayatPemesanan({
       nama: nama,
@@ -385,7 +425,7 @@ function bayarSekarang() {
       tanggal: tglFmt
     });
   });
-
+ 
   document.getElementById('panel4').style.display = 'none';
   document.getElementById('panel5').style.display = 'block';
   // Update step semua done
@@ -395,11 +435,12 @@ function bayarSekarang() {
   }
   showToast('🎉 Pembayaran berhasil! Tiket dikirim ke email Anda.');
 }
-
-// ============== RIWAYAT PEMESANAN ==============
+ 
+// ───── RIWAYAT PEMESANAN ─────
 // Disimpan di localStorage supaya tidak hilang saat pindah halaman / refresh
 const RIWAYAT_KEY = 'busnusantara_riwayat_pemesanan';
-
+ 
+// fungsi untuk memuat riwayat pemesanan dari localStorage
 function muatRiwayatPemesanan() {
   try {
     const saved = localStorage.getItem(RIWAYAT_KEY);
@@ -408,7 +449,8 @@ function muatRiwayatPemesanan() {
     return [];
   }
 }
-
+ 
+// fungsi untuk menyimpan riwayat pemesanan ke localStorage
 function simpanRiwayatPemesanan() {
   try {
     localStorage.setItem(RIWAYAT_KEY, JSON.stringify(riwayatPemesananLocal));
@@ -416,27 +458,29 @@ function simpanRiwayatPemesanan() {
     // localStorage tidak tersedia (mis. mode private) — abaikan, tetap jalan di memori
   }
 }
-
+ 
 let riwayatPemesananLocal = muatRiwayatPemesanan();
-
+ 
+// fungsi untuk menambahkan satu baris riwayat pemesanan baru, lalu menyimpan & merender ulang tabel
 function tambahRiwayatPemesanan(data) {
   riwayatPemesananLocal.push(data); // pesanan terbaru tampil di bawah
   simpanRiwayatPemesanan();
   renderTabelRiwayatPemesanan();
 }
-
+ 
+// fungsi untuk merender tabel riwayat pemesanan ke #tabelRiwayatPemesanan
 function renderTabelRiwayatPemesanan() {
   const tbody   = document.getElementById('tabelRiwayatPemesanan');
   const countEl = document.getElementById('riwayatCount');
   if (!tbody) return;
-
+ 
   if (countEl) countEl.textContent = riwayatPemesananLocal.length;
-
+ 
   if (riwayatPemesananLocal.length === 0) {
     tbody.innerHTML = `<tr><td colspan="5" class="riwayat-empty">Belum ada pesanan yang tercatat</td></tr>`;
     return;
   }
-
+ 
   tbody.innerHTML = riwayatPemesananLocal.map((r, i) => `
     <tr>
       <td class="riwayat-no">${i + 1}</td>
@@ -447,7 +491,8 @@ function renderTabelRiwayatPemesanan() {
     </tr>
   `).join('');
 }
-
+ 
+// fungsi untuk menghapus seluruh riwayat pemesanan
 function hapusRiwayatPemesanan() {
   if (riwayatPemesananLocal.length === 0) return;
   riwayatPemesananLocal = [];
@@ -455,12 +500,12 @@ function hapusRiwayatPemesanan() {
   renderTabelRiwayatPemesanan();
   showToast('🗑️ Riwayat pemesanan dikosongkan.');
 }
-
-// ============== INIT (pesananTiket.html only) ==============
+ 
+// ───── INIT (khusus pesananTiket.html) ─────
 if (document.getElementById('tanggalBrgkt')) {
   document.getElementById('tanggalBrgkt').min = new Date().toISOString().split('T')[0];
 }
-
+ 
 // Ambil query params dari halaman beranda (pencarian tiket / kartu rute populer)
 if (document.getElementById('kotaAsal')) {
   const params = new URLSearchParams(window.location.search);
@@ -480,14 +525,18 @@ if (document.getElementById('kotaAsal')) {
   }
   hitungHarga();
 }
-
+ 
 if (document.getElementById('tabelRiwayatPemesanan')) {
   renderTabelRiwayatPemesanan();
 }
-
-
-// berita js
-// ======= DATA BERITA =======
+ 
+// ════════════════════════════════
+// HALAMAN BERITA (berita.html)
+// Data berita & pengumuman, render kartu, tabel filter/sort/pagination, modal detail
+// ════════════════════════════════
+ 
+// ───── DATA BERITA ─────
+// data berita yang ditampilkan sebagai kartu di #beritaGrid
 const beritaData = [
   {
     judul: "Cara Mendapatkan Diskon Pelajar di BusKu:",
@@ -532,8 +581,9 @@ const beritaData = [
     gambar: "img/perjalananMalam.png"
   },
 ];
-
-// ======= DATA PENGUMUMAN =======
+ 
+// ───── DATA PENGUMUMAN ─────
+// data arsip pengumuman resmi yang ditampilkan di tabel riwayat pengumuman
 const pengumumanData = [
   { judul:"Cara Mendapatkan Diskon Pelajar di BusKu", kategori:"Promo", tanggal:"2026-08-01", status:"Akan Datang" },
   { judul:"Armada Bus Baru Rute Aceh–Medan Beroperasi", kategori:"Armada", tanggal:"2026-06-05", status:"Aktif" },
@@ -548,15 +598,17 @@ const pengumumanData = [
   { judul:"Bayar Tiket Bus Kini Lebih Mudah dengan QRIS dan Dompet Digital", kategori:"Kebijakan", tanggal:"2026-04-03", status:"Aktif" },
   { judul:"Promo Double Miles Akhir Pekan", kategori:"Promo", tanggal:"2024-07-01", status:"Berakhir" },
 ];
-
-// ======= STATE =======
+ 
+// ───── STATE ─────
+// state tabel pengumuman: data hasil filter, kunci & arah sort, halaman aktif
 let filteredData = [...pengumumanData];
 let sortKey = '';
 let sortAsc = true;
 let currentPage = 1;
 const perPage = 6;
-
-// ======= RENDER BERITA =======
+ 
+// ───── RENDER BERITA ─────
+// fungsi untuk merender kartu-kartu berita ke #beritaGrid
 function renderBerita() {
   const grid = document.getElementById('beritaGrid');
   grid.innerHTML = beritaData.map(b => `
@@ -576,23 +628,24 @@ function renderBerita() {
     </div>
   `).join('');
 }
-
-// ======= RENDER TABEL =======
+ 
+// ───── RENDER TABEL ─────
+// fungsi untuk merender tabel riwayat pengumuman sesuai halaman pagination & filter yang aktif
 function renderTabel() {
   const tbody = document.getElementById('tabelBody');
   const foot  = document.getElementById('tabelFoot');
   const start = (currentPage - 1) * perPage;
   const slice = filteredData.slice(start, start + perPage);
-
+ 
   if (slice.length === 0) {
     tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:2rem; color:var(--muted);">Tidak ada pengumuman ditemukan.</td></tr>`;
     foot.textContent = 'Tidak ada data.';
     renderPaginasi();
     return;
   }
-
+ 
   const badgeMap = { Aktif:'badge-success', Berakhir:'badge-danger', 'Akan Datang':'badge-info' };
-
+ 
   tbody.innerHTML = slice.map((d, i) => `
     <tr>
       <td style="color:var(--muted); font-size:.82rem;">${start + i + 1}</td>
@@ -603,13 +656,14 @@ function renderTabel() {
       <td><button class="btn btn-outline btn-sm" onclick="lihatDetail(${pengumumanData.indexOf(d)})">Detail</button></td>
     </tr>
   `).join('');
-
+ 
   foot.textContent = `Menampilkan ${start+1}–${Math.min(start+perPage, filteredData.length)} dari ${filteredData.length} pengumuman`;
   document.getElementById('jumlahHasil').textContent = `${filteredData.length} hasil`;
   renderPaginasi();
 }
-
-// ======= FILTER =======
+ 
+// ───── FILTER ─────
+// fungsi untuk memfilter data pengumuman berdasarkan kata kunci, kategori, dan status
 function filterTabel() {
   const q = document.getElementById('searchPengumuman').value.toLowerCase();
   const kat = document.getElementById('filterKategori').value;
@@ -622,7 +676,8 @@ function filterTabel() {
   currentPage = 1;
   renderTabel();
 }
-
+ 
+// fungsi untuk mengembalikan semua filter tabel pengumuman ke kondisi awal
 function resetFilter() {
   document.getElementById('searchPengumuman').value = '';
   document.getElementById('filterKategori').value = '';
@@ -631,8 +686,9 @@ function resetFilter() {
   currentPage = 1;
   renderTabel();
 }
-
-// ======= SORT =======
+ 
+// ───── SORT ─────
+// fungsi untuk mengurutkan tabel pengumuman berdasarkan kolom (key) yang diklik
 function sortTabel(key) {
   if (sortKey === key) sortAsc = !sortAsc;
   else { sortKey = key; sortAsc = true; }
@@ -642,8 +698,9 @@ function sortTabel(key) {
   });
   renderTabel();
 }
-
-// ======= PAGINATION =======
+ 
+// ───── PAGINATION ─────
+// fungsi untuk merender tombol-tombol pagination sesuai jumlah halaman hasil filter
 function renderPaginasi() {
   const total = Math.ceil(filteredData.length / perPage);
   const wrap = document.getElementById('pagination');
@@ -652,14 +709,16 @@ function renderPaginasi() {
     <button class="btn btn-sm ${i+1===currentPage ? 'btn-primary' : 'btn-outline'}" onclick="gantiPage(${i+1})">${i+1}</button>
   `).join('');
 }
-
+ 
+// fungsi untuk berpindah ke halaman tabel tertentu
 function gantiPage(n) {
   currentPage = n;
   renderTabel();
   document.querySelector('.section').scrollIntoView({behavior:'smooth'});
 }
-
-// ======= MODAL =======
+ 
+// ───── MODAL ─────
+// fungsi untuk menampilkan detail pengumuman pada modal
 function lihatDetail(idx) {
   const d = pengumumanData[idx];
   const badgeMap = { Aktif:'badge-success', Berakhir:'badge-danger', 'Akan Datang':'badge-info' };
@@ -677,7 +736,8 @@ function lihatDetail(idx) {
   `;
   document.getElementById('modalOverlay').style.display = 'flex';
 }
-
+ 
+// fungsi untuk menampilkan detail berita pada modal
 function bukaBerita(encoded) {
   const b = JSON.parse(decodeURIComponent(encoded));
   document.getElementById('modalContent').innerHTML = `
@@ -691,7 +751,8 @@ function bukaBerita(encoded) {
   `;
   document.getElementById('modalOverlay').style.display = 'flex';
 }
-
+ 
+// fungsi untuk menutup modal yang sedang terbuka
 function tutupModal() {
   document.getElementById('modalOverlay').style.display = 'none';
 }
@@ -700,15 +761,18 @@ if (document.getElementById('modalOverlay')) {
     if (e.target === document.getElementById('modalOverlay')) tutupModal();
   });
 }
-
-// ======= INIT =======
+ 
+// ───── INIT (khusus berita.html) ─────
 if (document.getElementById('beritaGrid')) renderBerita();
 if (document.getElementById('tabelBody')) renderTabel();
-
-
-
-// bantuan
-// ===== DATA FAQ =====
+ 
+// ════════════════════════════════
+// HALAMAN BANTUAN (bantuan.html)
+// Data FAQ, pencarian FAQ, form kontak dengan validasi & rating bintang
+// ════════════════════════════════
+ 
+// ───── DATA FAQ ─────
+// data pertanyaan & jawaban yang ditampilkan di accordion FAQ
 const faqData = [
   { q:"Bagaimana cara memesan tiket bus di BusKu?", a:"Kunjungi halaman Pesan Tiket, pilih kota asal dan tujuan, tanggal berangkat, kelas layanan, lalu pilih kursi dan isi data penumpang. Tiket akan langsung dikirim ke email dan WhatsApp Anda setelah pembayaran." },
   { q:"Apa saja metode pembayaran yang tersedia?", a:"Kami mendukung QRIS, transfer bank (BNI, BCA, Mandiri), GoPay, OVO, dan DANA. Semua transaksi diproses secara aman dan terenkripsi." },
@@ -719,8 +783,9 @@ const faqData = [
   { q:"Bagaimana cara melacak posisi bus saya?", a:"Fitur lacak bus tersedia di menu utama website dan aplikasi BusKu. Masukkan kode booking Anda untuk melihat posisi bus secara real-time." },
   { q:"Berapa lama proses refund setelah pembatalan?", a:"Proses refund membutuhkan waktu 3–7 hari kerja tergantung metode pembayaran. Transfer bank biasanya 3 hari kerja, sedangkan e-wallet 1–2 hari kerja." },
 ];
-
-// ===== FAQ =====
+ 
+// ───── FAQ ─────
+// fungsi untuk merender daftar pertanyaan FAQ ke #faqList
 function renderFAQ(data) {
   const list = document.getElementById('faqList');
   if (data.length === 0) {
@@ -737,7 +802,8 @@ function renderFAQ(data) {
     </div>
   `).join('');
 }
-
+ 
+// fungsi untuk membuka/menutup jawaban FAQ (accordion, hanya satu yang terbuka dalam satu waktu)
 function toggleFAQ(i) {
   const btn = document.getElementById('faqQ'+i);
   const ans = document.getElementById('faqA'+i);
@@ -747,21 +813,24 @@ function toggleFAQ(i) {
   document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
   if (!isOpen) { btn.classList.add('open'); ans.classList.add('open'); }
 }
-
+ 
+// fungsi untuk memfilter FAQ berdasarkan kata kunci pencarian
 function filterFAQ() {
   const q = document.getElementById('cariFAQ').value.toLowerCase();
   const filtered = faqData.filter(f => f.q.toLowerCase().includes(q) || f.a.toLowerCase().includes(q));
   renderFAQ(filtered);
 }
-
-// ===== FORM KONTAK =====
+ 
+// ───── FORM KONTAK ─────
+// batasi & tampilkan sisa karakter pada textarea pesan kontak
 if (document.getElementById('kontakPesan')) document.getElementById('kontakPesan').addEventListener('input', function() {
   const len = this.value.length;
   if (len > 500) this.value = this.value.slice(0, 500);
   document.getElementById('charCount').textContent = Math.min(len, 500) + ' / 500 karakter';
 });
-
+ 
 let nilaiRating = 0;
+// fungsi untuk mengatur nilai rating bintang yang dipilih pengguna
 function setRating(n) {
   nilaiRating = n;
   document.getElementById('nilaiRating').value = n;
@@ -770,7 +839,8 @@ function setRating(n) {
     s.style.color = parseInt(s.dataset.v) <= n ? 'var(--accent)' : '#ccc';
   });
 }
-
+ 
+// fungsi untuk memvalidasi dan mengirim form kontak, lalu menampilkan alert sukses & mereset form
 function kirimKontak() {
   const nama  = document.getElementById('kontakNama').value.trim();
   const email = document.getElementById('kontakEmail').value.trim();
@@ -778,18 +848,18 @@ function kirimKontak() {
   const pesan = document.getElementById('kontakPesan').value.trim();
   const alertBox = document.getElementById('alertKontak');
   let ok = true;
-
+ 
   const show = (id, show) => document.getElementById(id).classList.toggle('show', show);
   const markErr = (id, err) => document.getElementById(id).classList.toggle('error', err);
-
+ 
   show('err-kNama', !nama); markErr('kontakNama', !nama); if (!nama) ok = false;
   const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   show('err-kEmail', !emailOk); markErr('kontakEmail', !emailOk); if (!emailOk) ok = false;
   show('err-kTopik', !topik); if (!topik) ok = false;
   show('err-kPesan', !pesan); markErr('kontakPesan', !pesan); if (!pesan) ok = false;
-
+ 
   if (!ok) return;
-
+ 
   alertBox.innerHTML = `
     <div class="alert alert-success">
       ✅ Pesan Anda telah terkirim! Tim kami akan menghubungi <strong>${email}</strong> dalam 1x24 jam.
@@ -802,16 +872,17 @@ function kirimKontak() {
   showToast('📤 Pesan berhasil terkirim!');
   alertBox.scrollIntoView({ behavior:'smooth', block:'nearest' });
 }
-
-// ===== TOAST =====
+ 
+// ───── TOAST ─────
+// fungsi untuk menampilkan notifikasi toast sementara di pojok layar
 function showToast(msg) {
   const t = document.getElementById('toastMsg');
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3500);
 }
-
-// ===== INIT (bantuan.html only) =====
+ 
+// ───── INIT (khusus bantuan.html) ─────
 if (document.getElementById('faqList')) {
   renderFAQ(faqData);
 }
