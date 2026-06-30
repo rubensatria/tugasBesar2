@@ -670,7 +670,7 @@ function lihatDetail(idx) {
       <span>📅 ${new Date(d.tanggal).toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</span>
       <span>🏷️ ${d.kategori}</span>
     </div>
-    <p style="font-size:.9rem; color:var(--text); line-height:1.7;">Detail lengkap pengumuman ini akan tersedia segera. Untuk informasi lebih lanjut, hubungi tim layanan pelanggan BusNusantara di <strong>0800-123-4567</strong>.</p>
+    <p style="font-size:.9rem; color:var(--text); line-height:1.7;">Detail lengkap pengumuman ini akan tersedia segera. Untuk informasi lebih lanjut, hubungi tim layanan pelanggan BusKu di <strong>0800-123-4567</strong>.</p>
     <div style="margin-top:1.2rem; display:flex; justify-content:flex-end;">
       <button class="btn btn-primary btn-sm" onclick="tutupModal()">Tutup</button>
     </div>
@@ -710,96 +710,15 @@ if (document.getElementById('tabelBody')) renderTabel();
 // bantuan
 // ===== DATA FAQ =====
 const faqData = [
-  { q:"Bagaimana cara memesan tiket bus di BusNusantara?", a:"Kunjungi halaman Pesan Tiket, pilih kota asal dan tujuan, tanggal berangkat, kelas layanan, lalu pilih kursi dan isi data penumpang. Tiket akan langsung dikirim ke email dan WhatsApp Anda setelah pembayaran." },
+  { q:"Bagaimana cara memesan tiket bus di BusKu?", a:"Kunjungi halaman Pesan Tiket, pilih kota asal dan tujuan, tanggal berangkat, kelas layanan, lalu pilih kursi dan isi data penumpang. Tiket akan langsung dikirim ke email dan WhatsApp Anda setelah pembayaran." },
   { q:"Apa saja metode pembayaran yang tersedia?", a:"Kami mendukung QRIS, transfer bank (BNI, BCA, Mandiri), GoPay, OVO, dan DANA. Semua transaksi diproses secara aman dan terenkripsi." },
   { q:"Bisakah saya membatalkan atau mengubah jadwal tiket?", a:"Ya, tiket bisa di-reschedule hingga 2 jam sebelum keberangkatan tanpa biaya tambahan. Pembatalan dapat dilakukan hingga 6 jam sebelum keberangkatan dengan pengembalian dana 80% dari harga tiket." },
   { q:"Bagaimana cara menggunakan kode promo?", a:"Masukkan kode promo pada kolom yang tersedia di halaman Pesan Tiket setelah memilih rute dan kelas. Klik 'Terapkan' untuk mengaktifkan diskon secara otomatis." },
   { q:"Bagaimana jika saya kehilangan e-tiket?", a:"Tiket dapat dikirim ulang ke email atau WhatsApp yang terdaftar. Hubungi kami di 0800-123-4567 atau gunakan formulir kontak dengan menyertakan kode booking Anda." },
   { q:"Apakah ada bagasi tambahan yang diizinkan?", a:"Setiap penumpang diizinkan membawa bagasi maksimal 20 kg tanpa biaya tambahan. Bagasi lebih dari 20 kg dikenakan biaya Rp 5.000 per kg." },
-  { q:"Bagaimana cara melacak posisi bus saya?", a:"Fitur lacak bus tersedia di menu utama website dan aplikasi BusNusantara. Masukkan kode booking Anda untuk melihat posisi bus secara real-time." },
+  { q:"Bagaimana cara melacak posisi bus saya?", a:"Fitur lacak bus tersedia di menu utama website dan aplikasi BusKu. Masukkan kode booking Anda untuk melihat posisi bus secara real-time." },
   { q:"Berapa lama proses refund setelah pembatalan?", a:"Proses refund membutuhkan waktu 3–7 hari kerja tergantung metode pembayaran. Transfer bank biasanya 3 hari kerja, sedangkan e-wallet 1–2 hari kerja." },
 ];
-
-// ===== DATA RIWAYAT DEMO =====
-const riwayatData = [
-  { kode:"BN-XK2903", rute:"Banda Aceh → Medan", tanggal:"2025-05-20", kelas:"Eksekutif", total:300000, status:"Selesai" },
-  { kode:"BN-YM5821", rute:"Medan → Jakarta", tanggal:"2025-04-15", kelas:"VIP Sleeper", total:560000, status:"Selesai" },
-  { kode:"BN-ZL7740", rute:"Jakarta → Surabaya", tanggal:"2025-03-28", kelas:"Ekonomi AC", total:160000, status:"Selesai" },
-  { kode:"BN-QP3314", rute:"Padang → Pekanbaru", tanggal:"2025-03-10", kelas:"Ekonomi AC", total:95000, status:"Dibatalkan" },
-  { kode:"BN-RT9901", rute:"Bandung → Yogyakarta", tanggal:"2025-06-25", kelas:"Eksekutif", total:300000, status:"Menunggu" },
-];
-let riwayatFiltered = [...riwayatData];
-
-// ===== CEK STATUS =====
-const demoStatus = {
-  'BN-XK2903': { rute:"Banda Aceh → Medan", tanggal:"20 Mei 2025", kelas:"Eksekutif", status:"Selesai" },
-  'BN-YM5821': { rute:"Medan → Jakarta", tanggal:"15 Apr 2025", kelas:"VIP Sleeper", status:"Selesai" },
-  'BN-ZL7740': { rute:"Jakarta → Surabaya", tanggal:"28 Mar 2025", kelas:"Ekonomi AC", status:"Selesai" },
-  'BN-QP3314': { rute:"Padang → Pekanbaru", tanggal:"10 Mar 2025", kelas:"Ekonomi AC", status:"Dibatalkan" },
-  'BN-RT9901': { rute:"Bandung → Yogyakarta", tanggal:"25 Jun 2025", kelas:"Eksekutif", status:"Menunggu Pembayaran" },
-};
-
-function cekStatus() {
-  const kode = document.getElementById('inputKodeBooking').value.trim();
-  const hasil = document.getElementById('hasilCek');
-  if (!kode) { hasil.innerHTML = '<div class="alert alert-danger">Masukkan kode booking terlebih dahulu.</div>'; return; }
-  const data = demoStatus[kode];
-  if (data) {
-    const badgeMap = { Selesai:'badge-success', Dibatalkan:'badge-danger', 'Menunggu Pembayaran':'badge-warning' };
-    hasil.innerHTML = `
-      <div class="alert alert-success">✅ Kode booking ditemukan!</div>
-      <div class="table-wrapper" style="max-width:520px;">
-        <table>
-          <tbody>
-            <tr><td style="font-weight:600; color:var(--muted); width:140px;">Kode Booking</td><td style="font-weight:700;">${kode}</td></tr>
-            <tr><td style="font-weight:600; color:var(--muted);">Rute</td><td>${data.rute}</td></tr>
-            <tr><td style="font-weight:600; color:var(--muted);">Tanggal</td><td>${data.tanggal}</td></tr>
-            <tr><td style="font-weight:600; color:var(--muted);">Kelas</td><td>${data.kelas}</td></tr>
-            <tr><td style="font-weight:600; color:var(--muted);">Status</td><td><span class="badge ${badgeMap[data.status]}">${data.status}</span></td></tr>
-          </tbody>
-        </table>
-      </div>`;
-  } else {
-    hasil.innerHTML = `<div class="alert alert-danger">❌ Kode booking <strong>${kode}</strong> tidak ditemukan. Periksa kembali kode Anda.</div>`;
-  }
-}
-if (document.getElementById('inputKodeBooking')) {
-  document.getElementById('inputKodeBooking').addEventListener('keydown', e => {
-    if (e.key === 'Enter') cekStatus();
-  });
-}
-
-// ===== TABEL RIWAYAT =====
-function renderRiwayat() {
-  const tbody = document.getElementById('tabelRiwayat');
-  const badgeMap = { Selesai:'badge-success', Dibatalkan:'badge-danger', Menunggu:'badge-warning' };
-  if (riwayatFiltered.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:1.5rem; color:var(--muted);">Tidak ada data ditemukan.</td></tr>`;
-    document.getElementById('infoRiwayat').textContent = '0 hasil';
-    return;
-  }
-  tbody.innerHTML = riwayatFiltered.map(d => `
-    <tr>
-      <td style="font-weight:700; font-family:monospace;">${d.kode}</td>
-      <td>${d.rute}</td>
-      <td>${new Date(d.tanggal).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})}</td>
-      <td>${d.kelas}</td>
-      <td style="font-weight:600;">Rp ${d.total.toLocaleString('id')}</td>
-      <td><span class="badge ${badgeMap[d.status]}">${d.status}</span></td>
-    </tr>
-  `).join('');
-  document.getElementById('infoRiwayat').textContent = riwayatFiltered.length + ' hasil';
-}
-
-function filterRiwayat() {
-  const q = document.getElementById('cariRiwayat').value.toLowerCase();
-  const stat = document.getElementById('filterStatusRiwayat').value;
-  riwayatFiltered = riwayatData.filter(d =>
-    (!q || d.kode.toLowerCase().includes(q) || d.rute.toLowerCase().includes(q)) &&
-    (!stat || d.status === stat)
-  );
-  renderRiwayat();
-}
 
 // ===== FAQ =====
 function renderFAQ(data) {
@@ -895,7 +814,4 @@ function showToast(msg) {
 // ===== INIT (bantuan.html only) =====
 if (document.getElementById('faqList')) {
   renderFAQ(faqData);
-}
-if (document.getElementById('tabelRiwayat')) {
-  renderRiwayat();
 }

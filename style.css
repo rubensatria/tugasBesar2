@@ -119,7 +119,7 @@ nav::after {
 .nav-brand {
   display: flex;
   align-items: center;
-  gap: .6rem;
+  gap: .35rem;
   font-size: 1.4rem;
   font-weight: 800;
   color: var(--primary);
@@ -127,8 +127,8 @@ nav::after {
   transition: transform .25s var(--ease-bounce);
 }
 .nav-brand:hover { transform: translateX(2px) scale(1.03); }
-.nav-brand:hover :first-child { display: inline-block; animation: floatY .9s ease-in-out infinite; }
-.nav-brand span { color: var(--accent); }
+.nav-brand:hover .nav-brand-icon { display: inline-block; animation: floatY .9s ease-in-out infinite; }
+.nav-brand-accent { color: var(--accent); }
 
 .nav-links {
   display: flex;
@@ -165,7 +165,19 @@ nav::after {
   text-align: center;
   position: relative;
   overflow: hidden;
+
 }
+.hero-img{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+
 .hero::before {
   content: '';
   position: absolute;
@@ -198,6 +210,8 @@ nav::after {
   position: relative; z-index: 1;
   animation: fadeInUp .7s var(--ease) .12s both;
 }
+
+
 
 /* ===== SEARCH BOX ===== */
 .search-box {
@@ -577,6 +591,25 @@ select:focus { z-index: 9999; }
 .feature-item h4 { font-size: .95rem; font-weight: 700; margin-bottom: .2rem; }
 .feature-item p  { font-size: .83rem; color: var(--muted); }
 
+/* ===== GUIDE STEPS (Bantuan) ===== */
+.guide-list { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem; }
+.guide-item { display: flex; gap: 1rem; align-items: flex-start; background: var(--white); border-radius: var(--radius); padding: 1.2rem 1.4rem; box-shadow: 0 2px 10px rgba(0,0,0,.06); border-left: 3px solid transparent; transition: transform .25s var(--ease), box-shadow .25s var(--ease); }
+.guide-item:hover { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(26,58,92,.14); border-left-color: var(--accent); }
+.guide-num { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--teal), var(--accent)); color: var(--white); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.05rem; flex-shrink: 0; }
+.guide-item h4 { font-size: .98rem; font-weight: 700; margin-bottom: .25rem; color: var(--primary); }
+.guide-item p  { font-size: .85rem; color: var(--muted); }
+
+/* ===== KONTAK CEPAT (Bantuan) ===== */
+.quickcontact-wrap { margin-bottom: 2.2rem; }
+.quickcontact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 1rem; margin-bottom: .9rem; }
+.quickcontact-item { background: var(--white); border-radius: var(--radius); padding: 1.1rem 1.3rem; display: flex; gap: .9rem; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,.06); border: 1px solid transparent; text-decoration: none; color: inherit; transition: transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s; }
+.quickcontact-item:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(26,58,92,.16); border-color: var(--accent); }
+.quickcontact-icon { width: 44px; height: 44px; background: linear-gradient(135deg, #e0f9f5, #cce8ff); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0; transition: transform .35s var(--ease-bounce), background .25s; }
+.quickcontact-item:hover .quickcontact-icon { transform: rotate(-8deg) scale(1.1); background: linear-gradient(135deg, var(--teal), var(--accent)); }
+.quickcontact-item h4 { font-size: .92rem; font-weight: 700; margin-bottom: .15rem; color: var(--primary); }
+.quickcontact-item p  { font-size: .82rem; color: var(--muted); }
+.quickcontact-note { font-size: .8rem; color: var(--muted); }
+
 /* ===== PROMO BANNER ===== */
 .promo-banner {
   background: linear-gradient(135deg, #1A3A5C, #0f2540);
@@ -643,10 +676,12 @@ footer p { font-size: .85rem; line-height: 1.7; }
   padding: 2rem;
   color: var(--white);
   text-align: center;
+  position: relative;
+  overflow: hidden;
 }
-.hero-mini-title  { font-size: 1.8rem; font-weight: 800; }
+.hero-mini-title  { position: relative; z-index: 1; font-size: 1.8rem; font-weight: 800; }
 .hero-mini-accent { color: var(--accent); }
-.hero-mini-sub    { color: rgba(255,255,255,.7); margin-top: .3rem; }
+.hero-mini-sub    { position: relative; z-index: 1; color: rgba(255,255,255,.7); margin-top: .3rem; }
 
 .pesan-layout { display: flex; flex-direction: column; gap: 2rem; }
 .panel-hidden { display: none; }
@@ -739,10 +774,12 @@ footer p { font-size: .85rem; line-height: 1.7; }
   padding: 2rem;
   color: var(--white);
   text-align: center;
+  position: relative;
+  overflow: hidden;
 }
-.hero-kecil__title  { font-size: 1.8rem; font-weight: 800; }
+.hero-kecil__title  { position: relative; z-index: 1; font-size: 1.8rem; font-weight: 800; }
 .hero-kecil__accent { color: var(--accent); }
-.hero-kecil__sub    { color: rgba(255,255,255,.7); margin-top: .3rem; }
+.hero-kecil__sub    { position: relative; z-index: 1; color: rgba(255,255,255,.7); margin-top: .3rem; }
 
 .card-cek-status {
   background: var(--white);

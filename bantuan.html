@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Bantuan – BusNusantara</title>
+  <title>Bantuan – BusKu</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
@@ -14,7 +14,7 @@
 
 <!-- NAVBAR -->
 <nav>
-  <div class="nav-brand">🚌 <span>Bus</span>Nusantara</div>
+  <div class="nav-brand"><span class="nav-brand-icon">🚌</span><span class="nav-brand-text"><span class="nav-brand-accent">Bus</span>Ku</span></div>
   <ul class="nav-links">
     <li><a href="halaman.html">Beranda</a></li>
     <li><a href="pesananTiket.html">Pesan Tiket</a></li>
@@ -26,6 +26,7 @@
 
 <!-- HERO KECIL -->
 <div class="hero-kecil">
+  <img src="img/BantuanWeb.png" class="hero-img" alt="hero">
   <h1 class="hero-kecil__title">Pusat <span class="hero-kecil__accent">Bantuan</span></h1>
   <p class="hero-kecil__sub">Ada pertanyaan? Kami siap membantu Anda 24 jam sehari</p>
 </div>
@@ -33,46 +34,69 @@
 <section class="section">
   <div class="container">
 
-    <!-- CEK STATUS PESANAN (JavaScript + Tabel) -->
-    <div class="card-cek-status">
-      <h2 class="section-title section-title--mb-sm">🔍 Cek Status <span>Pesanan</span></h2>
-      <p class="text-muted-sm">Masukkan kode booking Anda untuk melihat status terkini</p>
-      <div class="cek-status__input-row">
-        <input type="text" id="inputKodeBooking" class="form-control cek-status__input" placeholder="Contoh: BN-ABC123" oninput="this.value=this.value.toUpperCase()"/>
-        <button class="btn btn-primary" onclick="cekStatus()">Cek Sekarang</button>
+    <!-- KONTAK CEPAT -->
+    <div class="quickcontact-wrap">
+      <h2 class="section-title section-title--mb-sm">⚡ Kontak <span>Cepat</span></h2>
+      <p class="text-muted-sm text-muted-sm--mb">Butuh bantuan segera? Hubungi kami langsung lewat salah satu kanal berikut</p>
+      <div class="quickcontact-grid">
+        <a href="https://wa.me/6280012345678" target="_blank" rel="noopener" class="quickcontact-item">
+          <div class="quickcontact-icon">💬</div>
+          <div>
+            <h4>WhatsApp</h4>
+            <p>0800-123-4567</p>
+          </div>
+        </a>
+        <a href="tel:0800123456" class="quickcontact-item">
+          <div class="quickcontact-icon">📞</div>
+          <div>
+            <h4>Telepon</h4>
+            <p>0800-123-4567 (Bebas Pulsa)</p>
+          </div>
+        </a>
+        <a href="mailto:info@busnusantara.id" class="quickcontact-item">
+          <div class="quickcontact-icon">📧</div>
+          <div>
+            <h4>Email</h4>
+            <p>info@BusKu.id</p>
+          </div>
+        </a>
       </div>
-      <div id="hasilCek" class="cek-status__hasil"></div>
+      <p class="quickcontact-note">Tim kami aktif 24 jam setiap hari untuk membantu kendala pemesanan, pembayaran, dan reschedule.</p>
     </div>
 
-    <!-- TABEL RIWAYAT PERJALANAN (demo) -->
-    <h2 class="section-title section-title--mb-sm">📊 Riwayat <span>Perjalanan</span></h2>
-    <p class="text-muted-sm text-muted-sm--mb">Contoh riwayat perjalanan pelanggan (demo)</p>
+    <!-- PANDUAN CARA PESAN TIKET -->
+    <h2 class="section-title section-title--mb-sm">🧭 Panduan <span>Cara Pesan Tiket</span></h2>
+    <p class="text-muted-sm text-muted-sm--mb">Empat langkah mudah memesan tiket bus di BusKu</p>
 
-    <div class="table-filters">
-      <input type="text" id="cariRiwayat" placeholder="🔍 Cari rute atau kode..." oninput="filterRiwayat()" class="table-filters__search"/>
-      <select id="filterStatusRiwayat" onchange="filterRiwayat()">
-        <option value="">Semua Status</option>
-        <option value="Selesai">Selesai</option>
-        <option value="Dibatalkan">Dibatalkan</option>
-        <option value="Menunggu">Menunggu</option>
-      </select>
-      <span id="infoRiwayat" class="table-filters__info"></span>
-    </div>
-
-    <div class="table-wrapper table-wrapper--mb">
-      <table>
-        <thead>
-          <tr>
-            <th>Kode Booking</th>
-            <th>Rute</th>
-            <th>Tanggal</th>
-            <th>Kelas</th>
-            <th>Total</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="tabelRiwayat"></tbody>
-      </table>
+    <div class="guide-list">
+      <div class="guide-item">
+        <div class="guide-num">1</div>
+        <div>
+          <h4>Pilih Rute & Jadwal</h4>
+          <p>Buka halaman Pesan Tiket, lalu tentukan kota asal, kota tujuan, tanggal keberangkatan, dan kelas layanan yang kamu inginkan.</p>
+        </div>
+      </div>
+      <div class="guide-item">
+        <div class="guide-num">2</div>
+        <div>
+          <h4>Pilih Kursi</h4>
+          <p>Klik kursi yang masih tersedia sesuai jumlah penumpang. Kursi yang sudah dipesan orang lain otomatis ditandai terpesan.</p>
+        </div>
+      </div>
+      <div class="guide-item">
+        <div class="guide-num">3</div>
+        <div>
+          <h4>Isi Data Penumpang</h4>
+          <p>Lengkapi nama setiap penumpang beserta email dan nomor WhatsApp aktif agar e-tiket bisa langsung dikirim ke kamu.</p>
+        </div>
+      </div>
+      <div class="guide-item">
+        <div class="guide-num">4</div>
+        <div>
+          <h4>Bayar & Terima E-Tiket</h4>
+          <p>Pilih metode pembayaran seperti QRIS, transfer bank, atau e-wallet. Setelah pembayaran berhasil, kode booking dan e-tiket langsung muncul.</p>
+        </div>
+      </div>
     </div>
 
     <!-- FAQ + KONTAK -->
@@ -107,14 +131,14 @@
             <div class="icon">📧</div>
             <div>
               <h4>Email</h4>
-              <p>info@busnusantara.id</p>
+              <p>info@BusKu.id</p>
             </div>
           </div>
           <div class="contact-card">
             <div class="icon">🏢</div>
             <div>
               <h4>Kantor Pusat</h4>
-              <p>Jl. Merdeka No. 123, Jakarta Pusat 10110</p>
+              <p>Jl. SM.Raja No. 10, Medan Amplas 10110</p>
             </div>
           </div>
         </div>
@@ -191,14 +215,14 @@
 <footer>
   <div class="footer-grid">
     <div>
-      <div class="footer-brand">🚌 <span>Bus</span>Nusantara</div>
+      <div class="footer-brand">🚌 <span>Bus</span>Ku</div>
       <p>Platform pemesanan tiket bus terpercaya yang menghubungkan kota-kota di seluruh Indonesia.</p>
     </div>
     <div class="footer-col"><h4>Layanan</h4><ul><li><a href="pesananTiket.html">Pesan Tiket</a></li><li><a href="#">Cek Status</a></li><li><a href="#">Reschedule</a></li></ul></div>
     <div class="footer-col"><h4>Perusahaan</h4><ul><li><a href="#">Tentang Kami</a></li><li><a href="berita.html">Berita</a></li><li><a href="#">Karier</a></li></ul></div>
     <div class="footer-col"><h4>Bantuan</h4><ul><li><a href="bantuan.html">FAQ</a></li><li><a href="bantuan.html">Hubungi Kami</a></li></ul></div>
   </div>
-  <div class="footer-bottom">© 2025 BusNusantara. All rights reserved.</div>
+  <div class="footer-bottom">© 2025 BusKu. All rights reserved.</div>
 </footer>
 
 <div class="toast" id="toastMsg"></div>
