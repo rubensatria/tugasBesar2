@@ -22,6 +22,7 @@
   --purple:       #6d28d9;
   --purple-light: #a78bfa;
   --light:        #EEF4FA;
+  --blue:           #3B7597;
   --light-teal:   #ecfeff;
   --white:        #ffffff;
   --text:         #1e2a38;
@@ -95,13 +96,14 @@ html { scrollbar-color: var(--teal) var(--light); scrollbar-width: thin; }
 
 /* ===== NAVBAR ===== */
 nav {
-  background: linear-gradient(90deg, #ffffff 0%, #f0faff 60%, #ffffff 100%);
+  background: linear-gradient(90deg, #BFDDF0 0%, #FFF9D2 60%, #8CC0EB 100%);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: .9rem 2rem;
   box-shadow: 0 2px 12px rgba(14,116,144,.12);
-  position: sticky;
+  position: fixed;
+  width: 100%;
   top: 0;
   z-index: 100;
   border-bottom: 1px solid rgba(14,116,144,.1);
@@ -151,11 +153,11 @@ nav::after {
   position: absolute;
   left: 50%; bottom: -2px;
   width: 0; height: 2px;
-  background: var(--accent);
+  background: var(--blue);
   transition: width .25s var(--ease), left .25s var(--ease);
 }
 .nav-links a:hover,
-.nav-links a.active { color: var(--accent); }
+.nav-links a.active { color: var(--blue); }
 .nav-links a:hover::after,
 .nav-links a.active::after { width: 100%; left: 0; }
 
@@ -163,7 +165,7 @@ nav::after {
 .hero {
   background: var(--grad-hero);
   color: var(--white);
-  padding: 4rem 2rem 3rem;
+  padding: 12rem 4rem 3rem;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -310,7 +312,7 @@ nav::after {
   animation: fadeInUp .6s var(--ease) both;
 }
 .section-title span {
-  background: linear-gradient(90deg, var(--accent), var(--teal));
+  background: linear-gradient(90deg, var(--accent-light), var(--accent));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -484,14 +486,14 @@ select:focus { z-index: 9999; }
 .riwayat-table-wrap { overflow-x: auto; border-radius: 8px; }
 .riwayat-table { width: 100%; border-collapse: collapse; font-size: .88rem; min-width: 560px; }
 .riwayat-table thead th { text-align: left; padding: .7rem 1rem; font-size: .72rem; font-weight: 700; letter-spacing: .5px; color: #7bafd4; text-transform: uppercase; border-bottom: 1.5px solid #254d78; background: #15304e; white-space: nowrap; }
-.riwayat-table tbody td { padding: .9rem 1rem; color: #F5820D; border-bottom: 1px solid #1e4570; vertical-align: middle; transition: box-shadow .2s; }
+.riwayat-table tbody td { padding: .9rem 1rem; color: #0e0d0d; border-bottom: 1px solid #1e4570; vertical-align: middle; transition: box-shadow .2s; }
 .riwayat-table tbody tr:last-child td { border-bottom: none; }
 .riwayat-table tbody tr:hover td { background: rgba(255,255,255,.06); }
 .riwayat-table tbody tr:hover td:first-child { box-shadow: inset 4px 0 0 var(--accent); }
 .riwayat-table td.riwayat-no   { color: #7bafd4; font-weight: 600; }
-.riwayat-table td.riwayat-nama { font-weight: 700; color: #F5820D; }
-.riwayat-table td.riwayat-rute { color: var(--accent); font-weight: 600; }
-.riwayat-table td.riwayat-email{ color: #F5820D; }
+.riwayat-table td.riwayat-nama { font-weight: 700; color: #111111; }
+.riwayat-table td.riwayat-rute { color: #111111; font-weight: 600; }
+.riwayat-table td.riwayat-email{ color: #0e0e0e; }
 .riwayat-empty { text-align: center; color: #7bafd4; font-size: .85rem; padding: 1.6rem !important; }
 
 /* ===== ALERT ===== */
@@ -675,7 +677,7 @@ footer p { font-size: .85rem; line-height: 1.7; }
 
 .hero-mini {
   background: linear-gradient(135deg, var(--primary), #0f2540);
-  padding: 2rem;
+  padding: 12rem 0.2rem 6rem;
   color: var(--white);
   text-align: center;
   position: relative;
@@ -683,7 +685,7 @@ footer p { font-size: .85rem; line-height: 1.7; }
 }
 .hero-mini-title  { position: relative; z-index: 1; font-size: 1.8rem; font-weight: 800; }
 .hero-mini-accent { color: var(--accent); }
-.hero-mini-sub    { position: relative; z-index: 1; color: rgba(255,255,255,.7); margin-top: .3rem; }
+.hero-mini-sub    { position: relative; z-index: 1; color: rgba(255,255,255,.7);  }
 
 .pesan-layout { display: flex; flex-direction: column; gap: 2rem; }
 .panel-hidden { display: none; }
